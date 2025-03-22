@@ -245,22 +245,17 @@ struct ContentView: View {
                 
                 Spacer()
                 
-                // 在 face 的右上方顯示連打數
-                if comboCount > 0 {
-                    Text("イラっ返し連打：\(comboCount) ")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding(8)
-                        .background(Color.black.opacity(0.5))
-                        .cornerRadius(8)
-                        .offset(comboJitter)
-                        .padding([.top, .trailing], 16)
-                        
-                }
+                Text("イラっ返し度：\(comboLevelText)")
+                    .font(.system(size: 16 + CGFloat(comboLevel) * 2, weight: comboLevelFontWeight))
+                    .foregroundColor(.red)
+                
+                Spacer()
+                
+                
                 
                 // 使用 GeometryReader 包裝圖片，方便計算位置與隨機 emoji 出現位置
                 GeometryReader { geo in
-                    ZStack {
+                    ZStack(alignment: .top) {
                         Image(currentFace)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
@@ -346,6 +341,17 @@ struct ContentView: View {
                             )
                             .animation(.spring(response: 0.2, dampingFraction: 0.5), value: transformScale)
                             .padding()
+                       
+                        if comboCount > 0 {
+                                Text("イラっ返し連打数：\(comboCount)")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .padding(8)
+                                    .background(Color.black.opacity(0.5))
+                                    .cornerRadius(8)
+                                    .offset(comboJitter)
+                                    .padding([.top, .trailing], 16)
+                            }
                         
                         if showEmoji {
                             Text(emojiText)
@@ -384,6 +390,45 @@ struct ContentView: View {
             try engine?.start()
         } catch {
             print("震動效果初始化錯誤: \(error.localizedDescription)")
+        }
+    }
+    
+    // 計算數值等級（數字形式）
+    private var comboLevel: Int {
+        if comboCount >= 60 {
+            return 6
+        } else if comboCount >= 50 {
+            return 5
+        } else {
+            return comboCount / 10 + 1
+        }
+    }
+    // 根據等級決定字體粗細
+    private var comboLevelFontWeight: Font.Weight {
+        switch comboLevel {
+        case 1:
+            return .regular
+        case 2:
+            return .medium
+        case 3:
+            return .semibold
+        case 4:
+            return .bold
+        case 5:
+            return .heavy
+        default:
+            return .black
+        }
+    }
+    // 依據 comboCount 決定等級顯示文字
+    private var comboLevelText: String {
+        if comboCount >= 50 {
+            if comboCount >= 60 {
+                return "ProMax"
+            }
+            return "Max"
+        } else {
+            return "\(comboCount / 10 + 1)"
         }
     }
 }
