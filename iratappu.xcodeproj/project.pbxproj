@@ -6,6 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		576B2CBD2D8E95BA009A06FC /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 576B2CBC2D8E95BA009A06FC /* GoogleMobileAds */; };
+		579D791A2D8E78E7001EF133 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 579D79192D8E78E7001EF133 /* GoogleMobileAds */; };
+		7640906196A88958CC81F735 /* Pods_iratappu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79DA85FF371F4C6410F5651D /* Pods_iratappu.framework */; };
+		915896E0BCF3FB49D80BC93F /* Pods_iratappu_iratappuUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD5DEAB9B7FFAEABCB1257D9 /* Pods_iratappu_iratappuUITests.framework */; };
+		915986EFBEE1D5F4282D1070 /* Pods_iratappuTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7085C03C1B0AB7A99C34408 /* Pods_iratappuTests.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		579D78B92D8E50B4001EF133 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,14 +32,36 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2AEB326C4A84A75AC24742C9 /* Pods-iratappu-iratappuUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iratappu-iratappuUITests.release.xcconfig"; path = "Target Support Files/Pods-iratappu-iratappuUITests/Pods-iratappu-iratappuUITests.release.xcconfig"; sourceTree = "<group>"; };
+		2C1A596D69BFB00833F2B0E7 /* Pods-iratappuTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iratappuTests.release.xcconfig"; path = "Target Support Files/Pods-iratappuTests/Pods-iratappuTests.release.xcconfig"; sourceTree = "<group>"; };
+		3274A46CFF3762AC4761DA6D /* Pods-iratappu.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iratappu.debug.xcconfig"; path = "Target Support Files/Pods-iratappu/Pods-iratappu.debug.xcconfig"; sourceTree = "<group>"; };
 		579D78A52D8E50B3001EF133 /* iratappu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iratappu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		579D78B82D8E50B4001EF133 /* iratappuTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iratappuTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		579D78C22D8E50B4001EF133 /* iratappuUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iratappuUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		79DA85FF371F4C6410F5651D /* Pods_iratappu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iratappu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9501F6CFA4B78E3B7AFFEAE6 /* Pods-iratappu.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iratappu.release.xcconfig"; path = "Target Support Files/Pods-iratappu/Pods-iratappu.release.xcconfig"; sourceTree = "<group>"; };
+		BC4E742B67458DABA1511A25 /* Pods-iratappuTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iratappuTests.debug.xcconfig"; path = "Target Support Files/Pods-iratappuTests/Pods-iratappuTests.debug.xcconfig"; sourceTree = "<group>"; };
+		C7085C03C1B0AB7A99C34408 /* Pods_iratappuTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iratappuTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC2140D89FEAE4AF50DC62F2 /* Pods-iratappu-iratappuUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iratappu-iratappuUITests.debug.xcconfig"; path = "Target Support Files/Pods-iratappu-iratappuUITests/Pods-iratappu-iratappuUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		FD5DEAB9B7FFAEABCB1257D9 /* Pods_iratappu_iratappuUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iratappu_iratappuUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		576B2CBF2D8E9637009A06FC /* Exceptions for "iratappu" folder in "iratappu" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 579D78A42D8E50B3001EF133 /* iratappu */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		579D78A72D8E50B3001EF133 /* iratappu */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				576B2CBF2D8E9637009A06FC /* Exceptions for "iratappu" folder in "iratappu" target */,
+			);
 			path = iratappu;
 			sourceTree = "<group>";
 		};
@@ -52,6 +82,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				576B2CBD2D8E95BA009A06FC /* GoogleMobileAds in Frameworks */,
+				579D791A2D8E78E7001EF133 /* GoogleMobileAds in Frameworks */,
+				7640906196A88958CC81F735 /* Pods_iratappu.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,6 +92,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				915986EFBEE1D5F4282D1070 /* Pods_iratappuTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,12 +100,36 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				915896E0BCF3FB49D80BC93F /* Pods_iratappu_iratappuUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		00AD141C22B376ACACD0D662 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				79DA85FF371F4C6410F5651D /* Pods_iratappu.framework */,
+				FD5DEAB9B7FFAEABCB1257D9 /* Pods_iratappu_iratappuUITests.framework */,
+				C7085C03C1B0AB7A99C34408 /* Pods_iratappuTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3F276585F5A05084CDBB271F /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				3274A46CFF3762AC4761DA6D /* Pods-iratappu.debug.xcconfig */,
+				9501F6CFA4B78E3B7AFFEAE6 /* Pods-iratappu.release.xcconfig */,
+				EC2140D89FEAE4AF50DC62F2 /* Pods-iratappu-iratappuUITests.debug.xcconfig */,
+				2AEB326C4A84A75AC24742C9 /* Pods-iratappu-iratappuUITests.release.xcconfig */,
+				BC4E742B67458DABA1511A25 /* Pods-iratappuTests.debug.xcconfig */,
+				2C1A596D69BFB00833F2B0E7 /* Pods-iratappuTests.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		579D789C2D8E50B3001EF133 = {
 			isa = PBXGroup;
 			children = (
@@ -79,6 +137,8 @@
 				579D78BB2D8E50B4001EF133 /* iratappuTests */,
 				579D78C52D8E50B4001EF133 /* iratappuUITests */,
 				579D78A62D8E50B3001EF133 /* Products */,
+				3F276585F5A05084CDBB271F /* Pods */,
+				00AD141C22B376ACACD0D662 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -99,9 +159,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 579D78CC2D8E50B4001EF133 /* Build configuration list for PBXNativeTarget "iratappu" */;
 			buildPhases = (
+				960BA7338591732A755B90D9 /* [CP] Check Pods Manifest.lock */,
 				579D78A12D8E50B3001EF133 /* Sources */,
 				579D78A22D8E50B3001EF133 /* Frameworks */,
 				579D78A32D8E50B3001EF133 /* Resources */,
+				B28FE274C43BEEF3F103846B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -111,8 +173,6 @@
 				579D78A72D8E50B3001EF133 /* iratappu */,
 			);
 			name = iratappu;
-			packageProductDependencies = (
-			);
 			productName = iratappu;
 			productReference = 579D78A52D8E50B3001EF133 /* iratappu.app */;
 			productType = "com.apple.product-type.application";
@@ -121,6 +181,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 579D78CF2D8E50B4001EF133 /* Build configuration list for PBXNativeTarget "iratappuTests" */;
 			buildPhases = (
+				C260A0F63DC10FD9F3225BF8 /* [CP] Check Pods Manifest.lock */,
 				579D78B42D8E50B4001EF133 /* Sources */,
 				579D78B52D8E50B4001EF133 /* Frameworks */,
 				579D78B62D8E50B4001EF133 /* Resources */,
@@ -134,8 +195,6 @@
 				579D78BB2D8E50B4001EF133 /* iratappuTests */,
 			);
 			name = iratappuTests;
-			packageProductDependencies = (
-			);
 			productName = iratappuTests;
 			productReference = 579D78B82D8E50B4001EF133 /* iratappuTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -144,9 +203,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 579D78D22D8E50B4001EF133 /* Build configuration list for PBXNativeTarget "iratappuUITests" */;
 			buildPhases = (
+				C4C27E8DDECB0CAD7A8ACC0A /* [CP] Check Pods Manifest.lock */,
 				579D78BE2D8E50B4001EF133 /* Sources */,
 				579D78BF2D8E50B4001EF133 /* Frameworks */,
 				579D78C02D8E50B4001EF133 /* Resources */,
+				DBB033BB4169C60448FB29AF /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -157,8 +218,6 @@
 				579D78C52D8E50B4001EF133 /* iratappuUITests */,
 			);
 			name = iratappuUITests;
-			packageProductDependencies = (
-			);
 			productName = iratappuUITests;
 			productReference = 579D78C22D8E50B4001EF133 /* iratappuUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -195,6 +254,9 @@
 			);
 			mainGroup = 579D789C2D8E50B3001EF133;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				576B2CBB2D8E95BA009A06FC /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 579D78A62D8E50B3001EF133 /* Products */;
 			projectDirPath = "";
@@ -230,6 +292,109 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		960BA7338591732A755B90D9 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-iratappu-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B28FE274C43BEEF3F103846B /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-iratappu/Pods-iratappu-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-iratappu/Pods-iratappu-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-iratappu/Pods-iratappu-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C260A0F63DC10FD9F3225BF8 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-iratappuTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C4C27E8DDECB0CAD7A8ACC0A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-iratappu-iratappuUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DBB033BB4169C60448FB29AF /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-iratappu-iratappuUITests/Pods-iratappu-iratappuUITests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-iratappu-iratappuUITests/Pods-iratappu-iratappuUITests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-iratappu-iratappuUITests/Pods-iratappu-iratappuUITests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		579D78A12D8E50B3001EF133 /* Sources */ = {
@@ -303,6 +468,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -364,6 +530,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -385,17 +552,22 @@
 		};
 		579D78CD2D8E50B4001EF133 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3274A46CFF3762AC4761DA6D /* Pods-iratappu.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = iratappu/iratappu.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"iratappu/Preview Content\"";
 				DEVELOPMENT_TEAM = MY8WU4892D;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = iratappu/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -424,17 +596,22 @@
 		};
 		579D78CE2D8E50B4001EF133 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9501F6CFA4B78E3B7AFFEAE6 /* Pods-iratappu.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = iratappu/iratappu.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"iratappu/Preview Content\"";
 				DEVELOPMENT_TEAM = MY8WU4892D;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = iratappu/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -463,10 +640,12 @@
 		};
 		579D78D02D8E50B4001EF133 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC4E742B67458DABA1511A25 /* Pods-iratappuTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = MY8WU4892D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
@@ -486,10 +665,12 @@
 		};
 		579D78D12D8E50B4001EF133 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2C1A596D69BFB00833F2B0E7 /* Pods-iratappuTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = MY8WU4892D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
@@ -509,9 +690,11 @@
 		};
 		579D78D32D8E50B4001EF133 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EC2140D89FEAE4AF50DC62F2 /* Pods-iratappu-iratappuUITests.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = MY8WU4892D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
@@ -531,9 +714,11 @@
 		};
 		579D78D42D8E50B4001EF133 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2AEB326C4A84A75AC24742C9 /* Pods-iratappu-iratappuUITests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = MY8WU4892D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
@@ -591,6 +776,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		576B2CBB2D8E95BA009A06FC /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.2.0;
+			};
+		};
+		579D79182D8E78E7001EF133 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		576B2CBC2D8E95BA009A06FC /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 576B2CBB2D8E95BA009A06FC /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
+		579D79192D8E78E7001EF133 /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 579D79182D8E78E7001EF133 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 579D789D2D8E50B3001EF133 /* Project object */;
 }
