@@ -5,6 +5,7 @@ import Combine
 import GoogleMobileAds
 
 struct ContentView: View {
+    @Environment(\.scenePhase) private var scenePhase
     // 統計與計數
     @State private var currentSessionCount = 0
     @AppStorage("todayCount") private var todayCount = 0
@@ -152,20 +153,22 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             VStack {
+                
                 // 統計數據顯示
                 HStack(spacing: 40) {
+                    
                     VStack {
-                        Text("這次")
+                        Text("現在💢度")
                         Text("\(currentSessionCount)")
                             .font(.largeTitle)
                     }
                     VStack {
-                        Text("今天")
+                        Text("今日💢度")
                         Text("\(todayCount)")
                             .font(.largeTitle)
                     }
                     VStack {
-                        Text("最近7天")
+                        Text("最近七日間")
                         Text("\(loadSevenDayCounts().reduce(0, +))")
                             .font(.largeTitle)
                     }
@@ -173,6 +176,21 @@ struct ContentView: View {
                 .padding()
                 
                 Spacer()
+                Text("イラっとしたら、タップでストレス解消！")
+                
+                Spacer()
+                
+                // 在 face 的右上方顯示連打數
+                if comboCount > 0 {
+                    Text("イライラ連打：\(comboCount) ")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding(8)
+                        .background(Color.black.opacity(0.5))
+                        .cornerRadius(8)
+                        .offset(comboJitter)
+                        .padding([.top, .trailing], 16)
+                }
                 
                 // 手勢區域：使用 DragGesture(minimumDistance: 0) 捕捉點按與長按
                 Image(currentFace)
@@ -245,30 +263,22 @@ struct ContentView: View {
                     .animation(.spring(response: 0.2, dampingFraction: 0.5), value: transformScale)
                     .padding()
                 
-                // 在 face 的右上方顯示連打數
-                if comboCount > 0 {
-                    Text("\(comboCount)タップ")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding(8)
-                        .background(Color.black.opacity(0.5))
-                        .cornerRadius(8)
-                        .offset(comboJitter)
-                        .padding([.top, .trailing], 16)
-                }
                 
                 Spacer()
                 
-                NavigationLink("查看統計圖", destination: StatisticsView(sevenDayCounts: loadSevenDayCounts()))
+                Text("あと \(50 - (currentSessionCount % 50)) タップで新しい演出が…？")
+                    .onAppear {
+                        // 把所有需要在出現時執行的動作放在同一個 closure
+                        prepareHaptics()
+                        checkDateChange()
+                        configureAudioSession()
+                        
+                    }
+                
+                NavigationLink("イライラ統計をチェックする →", destination: StatisticsView(sevenDayCounts: loadSevenDayCounts()))
                     .padding()
             }
-            Text("剩餘 \(50 - (currentSessionCount % 50)) 次")
-                .padding()
-                .onAppear {
-                    prepareHaptics()
-                    checkDateChange()
-                    configureAudioSession()
-                }
+            
             Spacer() // 讓廣告顯示在底部
 
             BannerAdView(adUnitID: "ca-app-pub-9275380963550837/6757899905") // 測試 AdMob ID
