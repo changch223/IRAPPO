@@ -38,6 +38,8 @@ struct iratappuApp: App {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                         AppOpenAdManager.shared.loadAd()
                         AppOpenAdManager.shared.showAdIfAvailable() //已經併入load
+                        // 呼叫 AppLaunchCounterManager 的 increment 方法
+                        AppLaunchCounterManager.shared.increment()
                     }
                 }
                 .onChange(of: scenePhase) { newPhase, _ in
@@ -47,6 +49,8 @@ struct iratappuApp: App {
                             // 從背景轉為前台，呼叫展示廣告的程式
                             AppOpenAdManager.shared.loadAd()
                             AppOpenAdManager.shared.showAdIfAvailable() //已經併入load
+                            // 呼叫 AppLaunchCounterManager 的 increment 方法
+                            AppLaunchCounterManager.shared.increment()
                         }
                         // 如果 previous == .active，就表示進入背景，這裡就不呼叫展示廣告
                     }

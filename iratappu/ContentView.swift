@@ -4,12 +4,30 @@ import AVFoundation
 import Combine
 import GoogleMobileAds
 
+class AppLaunchCounterManager: ObservableObject {
+    static let shared = AppLaunchCounterManager()
+    
+    @AppStorage("todayAppLaunchCount") var todayAppLaunchCount: Int = 0
+    
+    private init() {}
+    
+    func increment() {
+        todayAppLaunchCount += 1
+        print("App launch count incremented to \(todayAppLaunchCount)")
+    }
+}
+
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
     // 統計與計數
     @State private var currentSessionCount = 0
     @AppStorage("todayCount") private var todayCount = 0
     @AppStorage("sevenDayCountsData") private var sevenDayCountsData = Data()
+    // 儲存今天的最高 combo 數與 app 啟動次數
+    @AppStorage("todayComboCount") private var todayComboCount: Int = 0
+    @AppStorage("todayAppLaunchCount") private var todayAppLaunchCount: Int = 0
+
+    
     @State private var engine: CHHapticEngine?
     
     // 圖片與音效
@@ -43,6 +61,7 @@ struct ContentView: View {
     
     @State private var comboResetTimer: Timer?
     @State private var comboBaseCount: Int? = nil
+    
     
     // MARK: - AudioSession 設定
     private func configureAudioSession() {
@@ -150,11 +169,16 @@ struct ContentView: View {
         let todayKey = formatter.string(from: Date())
         let lastDateKey = UserDefaults.standard.string(forKey: "lastDateKey") ?? ""
         if todayKey != lastDateKey {
+            // 重置七天資料
             var counts = loadSevenDayCounts()
             counts.removeFirst()
             counts.append(0)
             saveSevenDayCounts(counts)
+            
+            // 重置今天數值
             todayCount = 0
+            todayComboCount = 0
+            todayAppLaunchCount = 0
             UserDefaults.standard.set(todayKey, forKey: "lastDateKey")
         }
     }
@@ -197,6 +221,12 @@ struct ContentView: View {
             // 以更新後的 currentSessionCount 當作連打起始基底
             comboBaseCount = currentSessionCount % 50
         }
+        // 如果今天的 combo 超過先前儲存的數值，就更新 todayComboCount
+        if comboCount > todayComboCount {
+            todayComboCount = comboCount
+        }
+        
+        
         lastTapTime = now
         
         // 產生隨機抖動偏移，再以動畫回復到原位
@@ -215,6 +245,7 @@ struct ContentView: View {
             }
         }
     }
+    
     
     // MARK: - 主畫面
     var body: some View {
@@ -341,17 +372,17 @@ struct ContentView: View {
                             )
                             .animation(.spring(response: 0.2, dampingFraction: 0.5), value: transformScale)
                             .padding()
-                       
+                        
                         if comboCount > 0 {
-                                Text("イラっ返し連打数：\(comboCount)")
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                    .padding(8)
-                                    .background(Color.black.opacity(0.5))
-                                    .cornerRadius(8)
-                                    .offset(comboJitter)
-                                    .padding([.top, .trailing], 16)
-                            }
+                            Text("イラっ返し連打数：\(comboCount)")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .padding(8)
+                                .background(Color.black.opacity(0.5))
+                                .cornerRadius(8)
+                                .offset(comboJitter)
+                                .padding([.top, .trailing], 16)
+                        }
                         
                         if showEmoji {
                             Text(emojiText)
@@ -372,8 +403,9 @@ struct ContentView: View {
                         configureAudioSession()
                     }
                 
-                NavigationLink("イライラ統計をチェックする →", destination: StatisticsView(sevenDayCounts: loadSevenDayCounts()))
-                    .padding()
+                NavigationLink("イライラ統計をチェックする →", destination: StatisticsView(allDailyData: convertToDayCounts(loadSevenDayCounts()))
+                )
+                .padding()
             }
             
             Spacer() // 讓廣告顯示在底部
@@ -382,6 +414,36 @@ struct ContentView: View {
                 .frame(height: 50)
         }
     }
+    
+    
+    /// 將七天的 [Int] 轉成 [DayCount]
+    /// - Parameter sevenDayCounts: 陣列中有 7 個整數，依序代表過去 7 天的點擊次數
+    /// - Returns: [DayCount]，每個元素包含 date, count, pressTriggerCount (可自行決定)
+    func convertToDayCounts(_ sevenDayCounts: [Int]) -> [DayCount] {
+        let calendar = Calendar.current
+        let today = Date()
+        
+        let dayCounts = sevenDayCounts.enumerated().map { (index, count) -> DayCount in
+            let offset = index - (sevenDayCounts.count - 1)
+            let date = calendar.date(byAdding: .day, value: offset, to: today) ?? today
+            
+            // 如果 offset == 0，代表今天，使用 todayComboCount 與 todayAppLaunchCount
+            if offset == 0 {
+                return DayCount(date: date,
+                                count: count,
+                                comboCount: todayComboCount,      // 從 AppStorage 讀取今天的最高 combo 次數
+                                appLaunchCount: todayAppLaunchCount) // 從 AppStorage 讀取今天的 app 啟動次數
+            } else {
+                return DayCount(date: date, count: count, comboCount: 0, appLaunchCount: 0)
+            }
+        }
+        
+        return dayCounts.sorted { $0.date < $1.date }
+    }
+
+
+
+    
     
     // MARK: - 震動引擎初始化
     private func prepareHaptics() {
