@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Charts
+import GoogleMobileAds
 
 // MARK: - 資料模型
 
@@ -21,10 +22,10 @@ struct DayCount: Identifiable {
 
 /// 統計範圍選項
 enum StatisticsRange: String, CaseIterable, Identifiable {
-    case week = "最近7天"
-    case month = "本月"
-    case quarter = "三個月"
-    case year = "每年"
+    case week = "最近7日間"
+    case month = "今月"
+    case quarter = "過去3ヶ月"
+    case year = "今年"
     
     var id: Self { self }
 }
@@ -41,7 +42,7 @@ struct StatisticsView: View {
     var body: some View {
         VStack(spacing: 16) {
             // 範圍切換
-            Picker("選擇統計範圍", selection: $selectedRange) {
+            Picker("統計期間を選択", selection: $selectedRange) {
                 ForEach(StatisticsRange.allCases) { range in
                     Text(range.rawValue).tag(range)
                 }
@@ -52,8 +53,8 @@ struct StatisticsView: View {
             // 柱狀圖：以每日點擊次數繪製
             Chart(filteredData) { dayCount in
                 BarMark(
-                    x: .value("日期", formatDate(dayCount.date)),
-                    y: .value("次數", dayCount.count)
+                    x: .value("日付", formatDate(dayCount.date)),
+                    y: .value("タップ回数", dayCount.count)
                 )
                 .foregroundStyle(.red.gradient)
             }
@@ -63,19 +64,22 @@ struct StatisticsView: View {
             // 統計摘要：兩列四個項目
             VStack(spacing: 16) {
                 HStack(spacing: 16) {
-                    summaryItemView(title: "總點擊次數", value: "\(totalTapCount)")
-                    summaryItemView(title: "最高點擊次數", value: "\(maxComboCount)")
+                    summaryItemView(title: "総タップ数", value: "\(totalTapCount)")
+                    summaryItemView(title: "最高タップ数（連続）", value: "\(maxComboCount)")
                 }
                 HStack(spacing: 16) {
-                    summaryItemView(title: "平均點擊次數", value: String(format: "%.1f", averageTapCount))
-                    summaryItemView(title: "統計 app 啟動次數", value: "\(totalAppLaunchCount)")
+                    summaryItemView(title: "平均タップ数", value: String(format: "%.1f", averageTapCount))
+                    summaryItemView(title: "アプリ起動回数", value: "\(totalAppLaunchCount)")
                 }
             }
             .padding()
             
-            Spacer()
+            Spacer() // 讓廣告顯示在底部
+            
+            BannerAdView(adUnitID: "ca-app-pub-9275380963550837/6757899905")
+                .frame(height: 50)
         }
-        .navigationTitle("焦躁統計")
+        .navigationTitle("イライラ統計🥹🥹🥹")
     }
 }
 
@@ -85,38 +89,54 @@ extension StatisticsView {
     private var filteredData: [DayCount] {
         let now = Date()
         let calendar = Calendar.current
+        // 取得今天的開始時刻
+        let todayStart = calendar.startOfDay(for: now)
         
         switch selectedRange {
         case .week:
-            // 過去 7 天（包含今天）
-            if let startDate = calendar.date(byAdding: .day, value: -6, to: now) {
-                return allDailyData.filter { $0.date >= startDate && $0.date <= now }
+            // 往前推6天，再取得那天的開始時刻
+            if let rawStartDate = calendar.date(byAdding: .day, value: -6, to: todayStart) {
+                let startDate = calendar.startOfDay(for: rawStartDate)
+                return allDailyData.filter {
+                    let dataDay = calendar.startOfDay(for: $0.date)
+                    return dataDay >= startDate && dataDay <= todayStart
+                }
             }
         case .month:
-            // 過去 30 天（包含今天）
-            if let startDate = calendar.date(byAdding: .day, value: -29, to: now) {
-                return allDailyData.filter { $0.date >= startDate && $0.date <= now }
+            if let rawStartDate = calendar.date(byAdding: .day, value: -29, to: todayStart) {
+                let startDate = calendar.startOfDay(for: rawStartDate)
+                return allDailyData.filter {
+                    let dataDay = calendar.startOfDay(for: $0.date)
+                    return dataDay >= startDate && dataDay <= todayStart
+                }
             }
         case .quarter:
-            // 過去 90 天（包含今天）
-            if let startDate = calendar.date(byAdding: .day, value: -89, to: now) {
-                return allDailyData.filter { $0.date >= startDate && $0.date <= now }
+            if let rawStartDate = calendar.date(byAdding: .day, value: -89, to: todayStart) {
+                let startDate = calendar.startOfDay(for: rawStartDate)
+                return allDailyData.filter {
+                    let dataDay = calendar.startOfDay(for: $0.date)
+                    return dataDay >= startDate && dataDay <= todayStart
+                }
             }
         case .year:
-            // 過去 365 天（包含今天）
-            if let startDate = calendar.date(byAdding: .day, value: -364, to: now) {
-                return allDailyData.filter { $0.date >= startDate && $0.date <= now }
+            if let rawStartDate = calendar.date(byAdding: .day, value: -364, to: todayStart) {
+                let startDate = calendar.startOfDay(for: rawStartDate)
+                return allDailyData.filter {
+                    let dataDay = calendar.startOfDay(for: $0.date)
+                    return dataDay >= startDate && dataDay <= todayStart
+                }
             }
         }
         return []
     }
-    
+
     /// 日期格式化 (例如 "MM/dd")
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "MM/dd"
         return formatter.string(from: date)
     }
+    
 }
 
 // MARK: - 統計數據計算

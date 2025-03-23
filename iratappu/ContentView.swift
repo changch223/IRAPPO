@@ -254,17 +254,17 @@ struct ContentView: View {
                 // 統計數據顯示
                 HStack(spacing: 40) {
                     VStack {
-                        Text("現在💢度")
+                        Text("現在の💢度")
                         Text("\(currentSessionCount)")
                             .font(.largeTitle)
                     }
                     VStack {
-                        Text("今日💢度")
+                        Text("今日の💢度")
                         Text("\(todayCount)")
                             .font(.largeTitle)
                     }
                     VStack {
-                        Text("最近七日間")
+                        Text("最近7日間")
                         Text("\(loadSevenDayCounts().reduce(0, +))")
                             .font(.largeTitle)
                     }
@@ -272,11 +272,11 @@ struct ContentView: View {
                 .padding()
                 
                 Spacer()
-                Text("イラっとしたら、タップでストレス解消！")
+                Text("イラっ💢ときたら、連打で撃退！")
                 
                 Spacer()
                 
-                Text("イラっ返し度：\(comboLevelText)")
+                Text("怒り撃退レベル：\(comboLevelText)")
                     .font(.system(size: 16 + CGFloat(comboLevel) * 2, weight: comboLevelFontWeight))
                     .foregroundColor(.red)
                 
@@ -374,7 +374,7 @@ struct ContentView: View {
                             .padding()
                         
                         if comboCount > 0 {
-                            Text("イラっ返し連打数：\(comboCount)")
+                            Text("連続タップ数：\(comboCount)")
                                 .font(.headline)
                                 .foregroundColor(.white)
                                 .padding(8)
@@ -396,14 +396,14 @@ struct ContentView: View {
                 
                 Spacer()
                 
-                Text("あと \(50 - (currentSessionCount % 50)) タップで、新しい人が登場…？")
+                Text("あと \(50 - (currentSessionCount % 50)) タップで、新しいキャラが登場…！？")
                     .onAppear {
                         prepareHaptics()
                         checkDateChange()
                         configureAudioSession()
                     }
                 
-                NavigationLink("イライラ統計をチェックする →", destination: StatisticsView(allDailyData: convertToDayCounts(loadSevenDayCounts()))
+                NavigationLink("イライラ統計を見る →", destination: StatisticsView(allDailyData: convertToDayCounts(loadSevenDayCounts()))
                 )
                 .padding()
             }
@@ -484,15 +484,25 @@ struct ContentView: View {
     }
     // 依據 comboCount 決定等級顯示文字
     private var comboLevelText: String {
-        if comboCount >= 50 {
-            if comboCount >= 60 {
-                return "ProMax"
-            }
-            return "Max"
+        if comboCount >= 60 {
+            return "🤬 ProMax"
+        } else if comboCount >= 50 {
+            return "😡 Max"
         } else {
-            return "\(comboCount / 10 + 1)"
+            let level = comboCount / 10 + 1
+            switch level {
+            case 1...2:
+                return "😌 余裕 (\(level))"
+            case 3...4:
+                return "💢 中怒 (\(level))"
+            case 5...6:
+                return "🔥 激怒 (\(level))"
+            default:
+                return "\(level)"
+            }
         }
     }
+
 }
 
 struct ContentView_Previews: PreviewProvider {
