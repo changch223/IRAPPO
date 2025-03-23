@@ -35,9 +35,9 @@
 		2AEB326C4A84A75AC24742C9 /* Pods-iratappu-iratappuUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iratappu-iratappuUITests.release.xcconfig"; path = "Target Support Files/Pods-iratappu-iratappuUITests/Pods-iratappu-iratappuUITests.release.xcconfig"; sourceTree = "<group>"; };
 		2C1A596D69BFB00833F2B0E7 /* Pods-iratappuTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iratappuTests.release.xcconfig"; path = "Target Support Files/Pods-iratappuTests/Pods-iratappuTests.release.xcconfig"; sourceTree = "<group>"; };
 		3274A46CFF3762AC4761DA6D /* Pods-iratappu.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iratappu.debug.xcconfig"; path = "Target Support Files/Pods-iratappu/Pods-iratappu.debug.xcconfig"; sourceTree = "<group>"; };
-		579D78A52D8E50B3001EF133 /* iratappu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iratappu.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		579D78B82D8E50B4001EF133 /* iratappuTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iratappuTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		579D78C22D8E50B4001EF133 /* iratappuUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iratappuUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		579D78A52D8E50B3001EF133 /* IRAPPO.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IRAPPO.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		579D78B82D8E50B4001EF133 /* IRAPPOTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IRAPPOTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		579D78C22D8E50B4001EF133 /* IRAPPOUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IRAPPOUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		79DA85FF371F4C6410F5651D /* Pods_iratappu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iratappu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9501F6CFA4B78E3B7AFFEAE6 /* Pods-iratappu.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iratappu.release.xcconfig"; path = "Target Support Files/Pods-iratappu/Pods-iratappu.release.xcconfig"; sourceTree = "<group>"; };
 		BC4E742B67458DABA1511A25 /* Pods-iratappuTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iratappuTests.debug.xcconfig"; path = "Target Support Files/Pods-iratappuTests/Pods-iratappuTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -47,12 +47,12 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		576B2CBF2D8E9637009A06FC /* Exceptions for "iratappu" folder in "iratappu" target */ = {
+		576B2CBF2D8E9637009A06FC /* Exceptions for "iratappu" folder in "IRAPPO" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 579D78A42D8E50B3001EF133 /* iratappu */;
+			target = 579D78A42D8E50B3001EF133 /* IRAPPO */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -60,7 +60,7 @@
 		579D78A72D8E50B3001EF133 /* iratappu */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				576B2CBF2D8E9637009A06FC /* Exceptions for "iratappu" folder in "iratappu" target */,
+				576B2CBF2D8E9637009A06FC /* Exceptions for "iratappu" folder in "IRAPPO" target */,
 			);
 			path = iratappu;
 			sourceTree = "<group>";
@@ -145,9 +145,9 @@
 		579D78A62D8E50B3001EF133 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				579D78A52D8E50B3001EF133 /* iratappu.app */,
-				579D78B82D8E50B4001EF133 /* iratappuTests.xctest */,
-				579D78C22D8E50B4001EF133 /* iratappuUITests.xctest */,
+				579D78A52D8E50B3001EF133 /* IRAPPO.app */,
+				579D78B82D8E50B4001EF133 /* IRAPPOTests.xctest */,
+				579D78C22D8E50B4001EF133 /* IRAPPOUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -155,9 +155,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		579D78A42D8E50B3001EF133 /* iratappu */ = {
+		579D78A42D8E50B3001EF133 /* IRAPPO */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 579D78CC2D8E50B4001EF133 /* Build configuration list for PBXNativeTarget "iratappu" */;
+			buildConfigurationList = 579D78CC2D8E50B4001EF133 /* Build configuration list for PBXNativeTarget "IRAPPO" */;
 			buildPhases = (
 				960BA7338591732A755B90D9 /* [CP] Check Pods Manifest.lock */,
 				579D78A12D8E50B3001EF133 /* Sources */,
@@ -172,14 +172,14 @@
 			fileSystemSynchronizedGroups = (
 				579D78A72D8E50B3001EF133 /* iratappu */,
 			);
-			name = iratappu;
+			name = IRAPPO;
 			productName = iratappu;
-			productReference = 579D78A52D8E50B3001EF133 /* iratappu.app */;
+			productReference = 579D78A52D8E50B3001EF133 /* IRAPPO.app */;
 			productType = "com.apple.product-type.application";
 		};
-		579D78B72D8E50B4001EF133 /* iratappuTests */ = {
+		579D78B72D8E50B4001EF133 /* IRAPPOTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 579D78CF2D8E50B4001EF133 /* Build configuration list for PBXNativeTarget "iratappuTests" */;
+			buildConfigurationList = 579D78CF2D8E50B4001EF133 /* Build configuration list for PBXNativeTarget "IRAPPOTests" */;
 			buildPhases = (
 				C260A0F63DC10FD9F3225BF8 /* [CP] Check Pods Manifest.lock */,
 				579D78B42D8E50B4001EF133 /* Sources */,
@@ -194,14 +194,14 @@
 			fileSystemSynchronizedGroups = (
 				579D78BB2D8E50B4001EF133 /* iratappuTests */,
 			);
-			name = iratappuTests;
+			name = IRAPPOTests;
 			productName = iratappuTests;
-			productReference = 579D78B82D8E50B4001EF133 /* iratappuTests.xctest */;
+			productReference = 579D78B82D8E50B4001EF133 /* IRAPPOTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		579D78C12D8E50B4001EF133 /* iratappuUITests */ = {
+		579D78C12D8E50B4001EF133 /* IRAPPOUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 579D78D22D8E50B4001EF133 /* Build configuration list for PBXNativeTarget "iratappuUITests" */;
+			buildConfigurationList = 579D78D22D8E50B4001EF133 /* Build configuration list for PBXNativeTarget "IRAPPOUITests" */;
 			buildPhases = (
 				C4C27E8DDECB0CAD7A8ACC0A /* [CP] Check Pods Manifest.lock */,
 				579D78BE2D8E50B4001EF133 /* Sources */,
@@ -217,9 +217,9 @@
 			fileSystemSynchronizedGroups = (
 				579D78C52D8E50B4001EF133 /* iratappuUITests */,
 			);
-			name = iratappuUITests;
+			name = IRAPPOUITests;
 			productName = iratappuUITests;
-			productReference = 579D78C22D8E50B4001EF133 /* iratappuUITests.xctest */;
+			productReference = 579D78C22D8E50B4001EF133 /* IRAPPOUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -245,7 +245,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 579D78A02D8E50B3001EF133 /* Build configuration list for PBXProject "iratappu" */;
+			buildConfigurationList = 579D78A02D8E50B3001EF133 /* Build configuration list for PBXProject "IRAPPO" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -262,9 +262,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				579D78A42D8E50B3001EF133 /* iratappu */,
-				579D78B72D8E50B4001EF133 /* iratappuTests */,
-				579D78C12D8E50B4001EF133 /* iratappuUITests */,
+				579D78A42D8E50B3001EF133 /* IRAPPO */,
+				579D78B72D8E50B4001EF133 /* IRAPPOTests */,
+				579D78C12D8E50B4001EF133 /* IRAPPOUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -423,12 +423,12 @@
 /* Begin PBXTargetDependency section */
 		579D78BA2D8E50B4001EF133 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 579D78A42D8E50B3001EF133 /* iratappu */;
+			target = 579D78A42D8E50B3001EF133 /* IRAPPO */;
 			targetProxy = 579D78B92D8E50B4001EF133 /* PBXContainerItemProxy */;
 		};
 		579D78C42D8E50B4001EF133 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 579D78A42D8E50B3001EF133 /* iratappu */;
+			target = 579D78A42D8E50B3001EF133 /* IRAPPO */;
 			targetProxy = 579D78C32D8E50B4001EF133 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -658,7 +658,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/iratappu.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/iratappu";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/IRAPPO.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/IRAPPO";
 				XROS_DEPLOYMENT_TARGET = 2.2;
 			};
 			name = Debug;
@@ -683,7 +683,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/iratappu.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/iratappu";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/IRAPPO.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/IRAPPO";
 				XROS_DEPLOYMENT_TARGET = 2.2;
 			};
 			name = Release;
@@ -739,7 +739,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		579D78A02D8E50B3001EF133 /* Build configuration list for PBXProject "iratappu" */ = {
+		579D78A02D8E50B3001EF133 /* Build configuration list for PBXProject "IRAPPO" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				579D78CA2D8E50B4001EF133 /* Debug */,
@@ -748,7 +748,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		579D78CC2D8E50B4001EF133 /* Build configuration list for PBXNativeTarget "iratappu" */ = {
+		579D78CC2D8E50B4001EF133 /* Build configuration list for PBXNativeTarget "IRAPPO" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				579D78CD2D8E50B4001EF133 /* Debug */,
@@ -757,7 +757,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		579D78CF2D8E50B4001EF133 /* Build configuration list for PBXNativeTarget "iratappuTests" */ = {
+		579D78CF2D8E50B4001EF133 /* Build configuration list for PBXNativeTarget "IRAPPOTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				579D78D02D8E50B4001EF133 /* Debug */,
@@ -766,7 +766,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		579D78D22D8E50B4001EF133 /* Build configuration list for PBXNativeTarget "iratappuUITests" */ = {
+		579D78D22D8E50B4001EF133 /* Build configuration list for PBXNativeTarget "IRAPPOUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				579D78D32D8E50B4001EF133 /* Debug */,
