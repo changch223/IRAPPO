@@ -1,4 +1,4 @@
-# 🎯 AGETEKO - イライラ解消！連打で感情リリースアプリ 💢✨
+# 🎯 IRAPPO - イライラ解消！連打で感情リリースアプリ 💢✨
 
 > あなたのイライラを、連打と音とエフェクトで昇華する感情デトックス系アプリ  
 > Haptics + Audio + SwiftUI + AdMob + 統計グラフ = スッキリ！
@@ -32,9 +32,9 @@
 ---
 
 📱 アプリ情報
-アプリ名：AGETEKO（あげてこ）
-カテゴリ：感情デトックス／連打ヒーリング
-対応：iOS 16 以上（iPhone専用）
-App Store：🔗 ダウンロードページ:https://apps.apple.com/us/app/irappo/id6743828397
-サポートページ：https://changch223.github.io
-プライバシーポリシー：[https://www.notion.so/AGETEKO-LILY-1c35a1f77b5e80d38465e81f5e6d2cd7](https://yummy-lantern-df8.notion.site/RAPPO-1c35a1f77b5e80d5a9a9cb15bf444ce5?pvs=4)
+アプリ名：IRAPPO  
+カテゴリ：感情デトックス／連打ヒーリング  
+対応：iOS 16 以上（iPhone専用）  
+App Store：🔗 ダウンロードページ:https://apps.apple.com/us/app/irappo/id6743828397  
+サポートページ：https://changch223.github.io  
+プライバシーポリシー：[https://www.notion.so/AGETEKO-LILY-1c35a1f77b5e80d38465e81f5e6d2cd7](https://yummy-lantern-df8.notion.site/RAPPO-1c35a1f77b5e80d5a9a9cb15bf444ce5?pvs=4)  
