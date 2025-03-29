@@ -1,0 +1,38 @@
+//
+//  Untitled.swift
+//  IRAPPO
+//
+//  Created by chang chiawei on 2025-03-29.
+//
+
+"currentSessionCount" = "当前愤怒度";
+"todayCount" = "今日愤怒度";
+"sevenDaysCount" = "最近7天";
+"tapToDefeat" = "生气了？连续点击消怒！";
+"angerLevel" = "愤怒击退等级：%@";
+"nextCharacter" = "再点击 %d 次，新角色将登场！？";
+"viewStatistics" = "查看愤怒统计 →";
+"statisticsTitle" = "愤怒统计🥹🥹🥹";
+"statisticsRange" = "选择统计期间";
+"recentWeek" = "最近7天";
+"currentMonth" = "本月";
+"lastQuarter" = "过去3个月";
+"thisYear" = "今年";
+"totalTapCount" = "总点击数";
+"maxComboCount" = "最高连续点击数";
+"averageTapCount" = "平均点击数";
+"appLaunchCount" = "应用启动次数";
+"comboTapCount" = "连击数：%d";
+
+
+"comboLevel.proMaxAnger" = "🤬 愤怒ProMax";
+"comboLevel.maxAnger" = "😡 超级Pro怒";
+"comboLevel.calm" = "😌 冷静? (%d)";
+"comboLevel.moderateAnger" = "💢 中怒 (%d)";
+"comboLevel.severeAnger" = "🔥 激怒 (%d)";
+
+
+"statisticsRange.week" = "最近7天";
+"statisticsRange.month" = "本月";
+"statisticsRange.quarter" = "过去3个月";
+"statisticsRange.year" = "今年";

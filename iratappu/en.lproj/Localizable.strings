@@ -1,0 +1,36 @@
+//
+//  Untitled.swift
+//  IRAPPO
+//
+//  Created by chang chiawei on 2025-03-29.
+//
+
+"currentSessionCount" = "Current Anger";
+"todayCount" = "Today's Anger";
+"sevenDaysCount" = "Last 7 Days";
+"tapToDefeat" = "Angry? Tap repeatedly to defeat!";
+"angerLevel" = "Anger Level: %@";
+"nextCharacter" = "%d more taps for a new character to appear!?";
+"viewStatistics" = "View Anger Statistics →";
+"statisticsTitle" = "Anger Statistics 🥹🥹🥹";
+"statisticsRange" = "Select statistics period";
+"recentWeek" = "Last 7 Days";
+"currentMonth" = "This Month";
+"lastQuarter" = "Past 3 Months";
+"thisYear" = "This Year";
+"totalTapCount" = "Total Taps";
+"maxComboCount" = "Max Combo Taps";
+"averageTapCount" = "Average Taps";
+"appLaunchCount" = "App Launches";
+"comboTapCount" = "Combo Taps: %d";
+
+"calm" = "😌 Calm (%d)";
+"moderateAnger" = "💢 Moderate (%d)";
+"severeAnger" = "🔥 Severe (%d)";
+"maxAnger" = "😡 Max Anger";
+"proMaxAnger" = "🤬 ProMax Anger";
+
+"statisticsRange.week" = "Last 7 Days";
+"statisticsRange.month" = "This Month";
+"statisticsRange.quarter" = "Past 3 Months";
+"statisticsRange.year" = "This Year";

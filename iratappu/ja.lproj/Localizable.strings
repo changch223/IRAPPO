@@ -1,0 +1,37 @@
+//
+//  Untitled.swift
+//  IRAPPO
+//
+//  Created by chang chiawei on 2025-03-29.
+//
+
+"currentSessionCount" = "現在の💢度";
+"todayCount" = "今日の💢度";
+"sevenDaysCount" = "最近7日間";
+"tapToDefeat" = "イラっ💢ときたら、連打で撃退！";
+"angerLevel" = "怒り撃退レベル：%@";
+"nextCharacter" = "あと %d タップで、新しいキャラが登場…！？";
+"viewStatistics" = "イライラ統計を見る →";
+"statisticsTitle" = "イライラ統計🥹🥹🥹";
+"statisticsRange" = "統計期間を選択";
+"recentWeek" = "最近7日間";
+"currentMonth" = "今月";
+"lastQuarter" = "過去3ヶ月";
+"thisYear" = "今年";
+"totalTapCount" = "総タップ数";
+"maxComboCount" = "最高タップ数（連続）";
+"averageTapCount" = "平均タップ数";
+"appLaunchCount" = "アプリ起動回数";
+"comboTapCount" = "連続タップ数：%d";
+
+"comboLevel.proMaxAnger" = "🤬 ProMax怒";
+"comboLevel.maxAnger" = "😡 Max怒";
+"comboLevel.calm" = "😌 ちょい余裕 (%d)";
+"comboLevel.moderateAnger" = "💢 中怒 (%d)";
+"comboLevel.severeAnger" = "🔥 激怒 (%d)";
+
+
+"statisticsRange.week" = "最近7日間";
+"statisticsRange.month" = "今月";
+"statisticsRange.quarter" = "過去3ヶ月";
+"statisticsRange.year" = "今年";

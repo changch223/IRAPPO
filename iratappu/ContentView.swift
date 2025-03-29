@@ -3,6 +3,9 @@ import CoreHaptics
 import AVFoundation
 import Combine
 import GoogleMobileAds
+import StoreKit
+
+
 
 class AppLaunchCounterManager: ObservableObject {
     static let shared = AppLaunchCounterManager()
@@ -19,6 +22,8 @@ class AppLaunchCounterManager: ObservableObject {
 
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
+    @State private var showStatisticsView = false
+    
     // 統計與計數
     @State private var currentSessionCount = 0
     @AppStorage("todayCount") private var todayCount = 0
@@ -247,6 +252,8 @@ struct ContentView: View {
     }
     
     
+    let hasRequestedReviewKey = "hasRequestedReview"
+    
     // MARK: - 主畫面
     var body: some View {
         NavigationStack {
@@ -254,17 +261,17 @@ struct ContentView: View {
                 // 統計數據顯示
                 HStack(spacing: 40) {
                     VStack {
-                        Text("現在の💢度")
+                        Text("currentSessionCount")
                         Text("\(currentSessionCount)")
                             .font(.largeTitle)
                     }
                     VStack {
-                        Text("今日の💢度")
+                        Text("todayCount")
                         Text("\(todayCount)")
                             .font(.largeTitle)
                     }
                     VStack {
-                        Text("最近7日間")
+                        Text("sevenDaysCount")
                         Text("\(loadSevenDayCounts().reduce(0, +))")
                             .font(.largeTitle)
                     }
@@ -272,11 +279,11 @@ struct ContentView: View {
                 .padding()
                 
                 Spacer()
-                Text("イラっ💢ときたら、連打で撃退！")
+                Text("tapToDefeat")
                 
                 Spacer()
                 
-                Text("怒り撃退レベル：\(comboLevelText)")
+                Text(String(format: NSLocalizedString("angerLevel", comment: ""), comboLevelText))
                     .font(.system(size: 16 + CGFloat(comboLevel) * 2, weight: comboLevelFontWeight))
                     .foregroundColor(.red)
                 
@@ -374,7 +381,7 @@ struct ContentView: View {
                             .padding()
                         
                         if comboCount > 0 {
-                            Text("連続タップ数：\(comboCount)")
+                            Text(String(format: NSLocalizedString("comboTapCount", comment: ""), comboCount))
                                 .font(.headline)
                                 .foregroundColor(.white)
                                 .padding(8)
@@ -383,6 +390,7 @@ struct ContentView: View {
                                 .offset(comboJitter)
                                 .padding([.top, .trailing], 16)
                         }
+                        
                         
                         if showEmoji {
                             Text(emojiText)
@@ -396,15 +404,27 @@ struct ContentView: View {
                 
                 Spacer()
                 
-                Text("あと \(50 - (currentSessionCount % 50)) タップで、新しいキャラが登場…！？")
+                Text(String(format: NSLocalizedString("nextCharacter", comment: ""), 50 - (currentSessionCount % 50)))
                     .onAppear {
                         prepareHaptics()
                         checkDateChange()
                         configureAudioSession()
                     }
                 
-                NavigationLink("イライラ統計を見る →", destination: StatisticsView(allDailyData: convertToDayCounts(loadSevenDayCounts()))
-                )
+                VStack {
+                    Button(NSLocalizedString("viewStatistics", comment: "")) {
+                        // 1. 請求 App Store 評分
+                        requestReviewOnceIfNeeded()
+                        
+                        // 2. 開啟統計頁
+                        showStatisticsView = true
+                    }
+                    
+                    // 3. Navigation 目的地
+                    .navigationDestination(isPresented: $showStatisticsView) {
+                        StatisticsView(allDailyData: convertToDayCounts(loadSevenDayCounts()))
+                    }
+                }
                 .padding()
             }
             
@@ -415,6 +435,20 @@ struct ContentView: View {
         }
     }
     
+    private func requestReviewOnceIfNeeded() {
+        let hasRequested = UserDefaults.standard.bool(forKey: hasRequestedReviewKey)
+        
+        if !hasRequested {
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+                SKStoreReviewController.requestReview(in: windowScene)
+                UserDefaults.standard.set(true, forKey: hasRequestedReviewKey)
+                print("✅ 評價請求已發送（僅發送一次）")
+            }
+        } else {
+            print("ℹ️ 已發送過評價請求，這次不重複觸發")
+        }
+    }
+
     
     /// 將七天的 [Int] 轉成 [DayCount]
     /// - Parameter sevenDayCounts: 陣列中有 7 個整數，依序代表過去 7 天的點擊次數
@@ -485,23 +519,24 @@ struct ContentView: View {
     // 依據 comboCount 決定等級顯示文字
     private var comboLevelText: String {
         if comboCount >= 60 {
-            return "🤬 ProMax"
+            return NSLocalizedString("comboLevel.proMaxAnger", comment: "")
         } else if comboCount >= 50 {
-            return "😡 Max"
+            return NSLocalizedString("comboLevel.maxAnger", comment: "")
         } else {
             let level = comboCount / 10 + 1
             switch level {
             case 1...2:
-                return "😌 余裕 (\(level))"
+                return String(format: NSLocalizedString("comboLevel.calm", comment: ""), level)
             case 3...4:
-                return "💢 中怒 (\(level))"
+                return String(format: NSLocalizedString("comboLevel.moderateAnger", comment: ""), level)
             case 5...6:
-                return "🔥 激怒 (\(level))"
+                return String(format: NSLocalizedString("comboLevel.severeAnger", comment: ""), level)
             default:
                 return "\(level)"
             }
         }
     }
+
 
 }
 

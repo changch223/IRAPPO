@@ -22,13 +22,28 @@ struct DayCount: Identifiable {
 
 /// 統計範圍選項
 enum StatisticsRange: String, CaseIterable, Identifiable {
-    case week = "最近7日間"
-    case month = "今月"
-    case quarter = "過去3ヶ月"
-    case year = "今年"
-    
+    case week
+    case month
+    case quarter
+    case year
+
     var id: Self { self }
+
+    /// 提供對應的本地化文字
+    var localizedName: String {
+        switch self {
+        case .week:
+            return NSLocalizedString("statisticsRange.week", comment: "")
+        case .month:
+            return NSLocalizedString("statisticsRange.month", comment: "")
+        case .quarter:
+            return NSLocalizedString("statisticsRange.quarter", comment: "")
+        case .year:
+            return NSLocalizedString("statisticsRange.year", comment: "")
+        }
+    }
 }
+
 
 // MARK: - StatisticsView 主視圖
 
@@ -42,9 +57,9 @@ struct StatisticsView: View {
     var body: some View {
         VStack(spacing: 16) {
             // 範圍切換
-            Picker("統計期間を選択", selection: $selectedRange) {
+            Picker(NSLocalizedString("statisticsRange", comment: ""), selection: $selectedRange) {
                 ForEach(StatisticsRange.allCases) { range in
-                    Text(range.rawValue).tag(range)
+                    Text(range.localizedName).tag(range)
                 }
             }
             .pickerStyle(.segmented)
@@ -64,12 +79,24 @@ struct StatisticsView: View {
             // 統計摘要：兩列四個項目
             VStack(spacing: 16) {
                 HStack(spacing: 16) {
-                    summaryItemView(title: "総タップ数", value: "\(totalTapCount)")
-                    summaryItemView(title: "最高タップ数（連続）", value: "\(maxComboCount)")
+                    summaryItemView(
+                        title: NSLocalizedString("totalTapCount", comment: ""),
+                        value: "\(totalTapCount)"
+                    )
+                    summaryItemView(
+                        title: NSLocalizedString("maxComboCount", comment: ""),
+                        value: "\(maxComboCount)"
+                    )
                 }
                 HStack(spacing: 16) {
-                    summaryItemView(title: "平均タップ数", value: String(format: "%.1f", averageTapCount))
-                    summaryItemView(title: "アプリ起動回数", value: "\(totalAppLaunchCount)")
+                    summaryItemView(
+                        title: NSLocalizedString("averageTapCount", comment: ""),
+                        value: String(format: "%.1f", averageTapCount)
+                    )
+                    summaryItemView(
+                        title: NSLocalizedString("appLaunchCount", comment: ""),
+                        value: "\(totalAppLaunchCount)"
+                    )
                 }
             }
             .padding()
@@ -79,7 +106,7 @@ struct StatisticsView: View {
             BannerAdView(adUnitID: "ca-app-pub-9275380963550837/6757899905")
                 .frame(height: 50)
         }
-        .navigationTitle("イライラ統計🥹🥹🥹")
+        .navigationTitle("statisticsTitle")
     }
 }
 
