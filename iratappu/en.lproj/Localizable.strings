@@ -24,13 +24,26 @@
 "appLaunchCount" = "App Launches";
 "comboTapCount" = "Combo Taps: %d";
 
-"calm" = "😌 Calm (%d)";
-"moderateAnger" = "💢 Moderate (%d)";
-"severeAnger" = "🔥 Severe (%d)";
-"maxAnger" = "😡 Max Anger";
-"proMaxAnger" = "🤬 ProMax Anger";
+"comboLevel.calm" = "😌 Calm (%d)";
+"comboLevel.moderateAnger" = "💢 Moderate (%d)";
+"comboLevel.severeAnger" = "🔥 Severe (%d)";
+"comboLevel.maxAnger" = "😡 Max Anger";
+"comboLevel.proMaxAnger" = "🤬 ProMax Anger";
 
 "statisticsRange.week" = "Last 7 Days";
 "statisticsRange.month" = "This Month";
 "statisticsRange.quarter" = "Past 3 Months";
 "statisticsRange.year" = "This Year";
+
+"use_default_image" = "Use Default Image";
+"use_custom_image" = "Use Custom Image";
+"select_sound_effect" = "Select Sound Effect";
+"sound_effect_hit" = "hit (slap 1)";
+"sound_effect_hit1" = "hit1 (slap 2)";
+"sound_effect_hit2" = "hit2 (slap 3)";
+"sound_effect_ough" = "ough (howl)";
+"sound_effect_aaa" = "aaa (scream)";
+"sound_effect_kokoko" = "kokoko (wood fish)";
+
+"switch_back_normal" = "Switch back to normal version";
+"switch_mokugyo_version" = "Switch to Mokugyo version";

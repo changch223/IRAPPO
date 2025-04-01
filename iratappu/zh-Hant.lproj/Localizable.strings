@@ -35,3 +35,16 @@
 "statisticsRange.month" = "本月";
 "statisticsRange.quarter" = "過去3個月";
 "statisticsRange.year" = "今年";
+
+"use_default_image" = "使用預設圖片";
+"use_custom_image" = "使用自訂圖片";
+"select_sound_effect" = "選擇音效";
+"sound_effect_hit" = "hit (拍打1)";
+"sound_effect_hit1" = "hit1 (拍打2)";
+"sound_effect_hit2" = "hit2 (拍打3)";
+"sound_effect_ough" = "ough (哀嚎)";
+"sound_effect_aaa" = "aaa (悲鳴)";
+"sound_effect_kokoko" = "kokoko (木魚)";
+
+"switch_back_normal" = "切換回一般版本";
+"switch_mokugyo_version" = "切換功德木魚版本";

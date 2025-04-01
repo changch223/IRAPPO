@@ -24,6 +24,16 @@
 "appLaunchCount" = "应用启动次数";
 "comboTapCount" = "连击数：%d";
 
+"use_default_image" = "使用預設圖片";
+"use_custom_image" = "使用自訂圖片";
+"select_sound_effect" = "選擇音效";
+"sound_effect_hit" = "hit (拍打1)";
+"sound_effect_hit1" = "hit1 (拍打2)";
+"sound_effect_hit2" = "hit2 (拍打3)";
+"sound_effect_ough" = "ough (哀嚎)";
+"sound_effect_aaa" = "aaa (悲鳴)";
+"sound_effect_kokoko" = "kokoko (木魚)";
+
 
 "comboLevel.proMaxAnger" = "🤬 愤怒ProMax";
 "comboLevel.maxAnger" = "😡 超级Pro怒";
@@ -36,3 +46,16 @@
 "statisticsRange.month" = "本月";
 "statisticsRange.quarter" = "过去3个月";
 "statisticsRange.year" = "今年";
+
+"use_default_image" = "使用默认图片";
+"use_custom_image" = "使用自定义图片";
+"select_sound_effect" = "选择音效";
+"sound_effect_hit" = "hit (拍打1)";
+"sound_effect_hit1" = "hit1 (拍打2)";
+"sound_effect_hit2" = "hit2 (拍打3)";
+"sound_effect_ough" = "ough (哀嚎)";
+"sound_effect_aaa" = "aaa (悲鸣)";
+"sound_effect_kokoko" = "kokoko (木鱼)";
+
+"switch_back_normal" = "切换回一般版本";
+"switch_mokugyo_version" = "切换功德木鱼版本";

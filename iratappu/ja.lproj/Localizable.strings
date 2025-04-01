@@ -35,3 +35,16 @@
 "statisticsRange.month" = "今月";
 "statisticsRange.quarter" = "過去3ヶ月";
 "statisticsRange.year" = "今年";
+
+"use_default_image" = "デフォルト画像を使用";
+"use_custom_image" = "カスタム画像を使用";
+"select_sound_effect" = "効果音を選択";
+"sound_effect_hit" = "hit (拍打1)";
+"sound_effect_hit1" = "hit1 (拍打2)";
+"sound_effect_hit2" = "hit2 (拍打3)";
+"sound_effect_ough" = "ough (哀嚎)";
+"sound_effect_aaa" = "aaa (悲鳴)";
+"sound_effect_kokoko" = "kokoko (木魚)";
+
+"switch_back_normal" = "通常バージョンに戻す";
+"switch_mokugyo_version" = "功徳木魚バージョンに切り替える";

@@ -57,6 +57,24 @@
 			);
 			target = 579D78A42D8E50B3001EF133 /* IRAPPO */;
 		};
+		578B8B052D9C526600573192 /* Exceptions for "iratappu" folder in "IRAPPOTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				HIT/aaa.wav,
+				HIT/kokoko.wav,
+				HIT/ough.wav,
+			);
+			target = 579D78B72D8E50B4001EF133 /* IRAPPOTests */;
+		};
+		578B8B062D9C526600573192 /* Exceptions for "iratappu" folder in "IRAPPOUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				HIT/aaa.wav,
+				HIT/kokoko.wav,
+				HIT/ough.wav,
+			);
+			target = 579D78C12D8E50B4001EF133 /* IRAPPOUITests */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
@@ -76,6 +94,8 @@
 			exceptions = (
 				576B2CBF2D8E9637009A06FC /* Exceptions for "iratappu" folder in "IRAPPO" target */,
 				575276C42D98586800E80CC6 /* Exceptions for "iratappu" folder in "Compile Sources" phase from "IRAPPO" target */,
+				578B8B052D9C526600573192 /* Exceptions for "iratappu" folder in "IRAPPOTests" target */,
+				578B8B062D9C526600573192 /* Exceptions for "iratappu" folder in "IRAPPOUITests" target */,
 			);
 			path = iratappu;
 			sourceTree = "<group>";

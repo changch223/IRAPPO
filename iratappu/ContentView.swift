@@ -4,8 +4,137 @@ import AVFoundation
 import Combine
 import GoogleMobileAds
 import StoreKit
+import PhotosUI
+import Vision
+import UIKit
+import CoreImage
 
+// MARK: - 自動去背功能
+extension CGImagePropertyOrientation {
+    // 將 UIImage.Orientation 轉為 Vision 的 CGImagePropertyOrientation
+    init(_ orientation: UIImage.Orientation) {
+        switch orientation {
+        case .up:            self = .up
+        case .down:          self = .down
+        case .left:          self = .left
+        case .right:         self = .right
+        case .upMirrored:    self = .upMirrored
+        case .downMirrored:  self = .downMirrored
+        case .leftMirrored:  self = .leftMirrored
+        case .rightMirrored: self = .rightMirrored
+        @unknown default:    self = .up
+        }
+    }
+}
 
+/// 去背函式：先用 Vision 做人像分割，再將遮罩縮放到與原圖同大小，最後用 CIBlendWithMask 去背，
+/// 並將結果縮小 1.5 倍。
+func removeBackground(from image: UIImage, completion: @escaping (UIImage?) -> Void) {
+    guard let cgImage = image.cgImage else {
+        completion(nil)
+        return
+    }
+    
+    let request = VNGeneratePersonSegmentationRequest()
+    request.qualityLevel = .accurate
+    request.outputPixelFormat = kCVPixelFormatType_OneComponent8
+    request.usesCPUOnly = false // 可使用 GPU 加速
+    
+    let orientation = CGImagePropertyOrientation(image.imageOrientation)
+    let handler = VNImageRequestHandler(cgImage: cgImage, orientation: orientation, options: [:])
+    
+    DispatchQueue.global(qos: .userInitiated).async {
+        do {
+            try handler.perform([request])
+            guard let pixelBuffer = request.results?.first?.pixelBuffer else {
+                DispatchQueue.main.async { completion(nil) }
+                return
+            }
+            
+            let ciImage = CIImage(cgImage: cgImage)
+            let maskCIImage = CIImage(cvPixelBuffer: pixelBuffer)
+            
+            // 將 mask 根據原圖大小做縮放
+            let scaleX = ciImage.extent.width  / maskCIImage.extent.width
+            let scaleY = ciImage.extent.height / maskCIImage.extent.height
+            let scaledMask = maskCIImage.transformed(by: .init(scaleX: scaleX, y: scaleY))
+            
+            // 使用 CIBlendWithMask 做去背
+            let maskedImage = ciImage.applyingFilter("CIBlendWithMask", parameters: [
+                "inputMaskImage": scaledMask
+            ])
+            
+            // 將去背後的結果縮小 1.5 倍
+            let scaledDownImage = maskedImage.transformed(by: CGAffineTransform(scaleX: 1/3, y: 1/3))
+            
+            let context = CIContext()
+            if let outputCGImage = context.createCGImage(scaledDownImage, from: scaledDownImage.extent) {
+                let result = UIImage(cgImage: outputCGImage, scale: image.scale, orientation: image.imageOrientation)
+                DispatchQueue.main.async {
+                    completion(result)
+                }
+            } else {
+                DispatchQueue.main.async {
+                    completion(nil)
+                }
+            }
+        } catch {
+            print("Vision error: \(error)")
+            DispatchQueue.main.async {
+                completion(nil)
+            }
+        }
+    }
+}
+
+// MARK: - ImagePicker 實作（包含去背功能）
+struct ImagePicker: UIViewControllerRepresentable {
+    @Binding var image: UIImage?
+    @Binding var isPresented: Bool  // 控制圖片選取器顯示
+
+    func makeUIViewController(context: Context) -> PHPickerViewController {
+        var config = PHPickerConfiguration()
+        config.filter = .images
+        config.selectionLimit = 1  // 限制只選一張圖片
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = context.coordinator
+        return picker
+    }
+    
+    func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) {
+        // 不需要更新
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    class Coordinator: NSObject, PHPickerViewControllerDelegate {
+        let parent: ImagePicker
+        
+        init(_ parent: ImagePicker) {
+            self.parent = parent
+        }
+        
+        func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+            DispatchQueue.main.async {
+                self.parent.isPresented = false
+            }
+            guard let provider = results.first?.itemProvider,
+                  provider.canLoadObject(ofClass: UIImage.self) else { return }
+            
+            provider.loadObject(ofClass: UIImage.self) { image, error in
+                if let uiImage = image as? UIImage {
+                    removeBackground(from: uiImage) { processedImage in
+                        DispatchQueue.main.async {
+                            self.parent.image = processedImage ?? uiImage
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 class AppLaunchCounterManager: ObservableObject {
     static let shared = AppLaunchCounterManager()
@@ -28,10 +157,16 @@ struct ContentView: View {
     @State private var currentSessionCount = 0
     @AppStorage("todayCount") private var todayCount = 0
     @AppStorage("sevenDayCountsData") private var sevenDayCountsData = Data()
-    // 儲存今天的最高 combo 數與 app 啟動次數
     @AppStorage("todayComboCount") private var todayComboCount: Int = 0
     @AppStorage("todayAppLaunchCount") private var todayAppLaunchCount: Int = 0
-
+    
+    // 新增狀態變數：控制是否使用自訂圖片與上傳的圖片
+    @State private var useCustomImage: Bool = false
+    @State private var customImage: UIImage? = nil
+    @State private var showingImagePicker: Bool = false
+    
+    // ★ 新增：切換功德木魚版本狀態
+    @State private var isMokugyoVersion: Bool = false
     
     @State private var engine: CHHapticEngine?
     
@@ -39,11 +174,14 @@ struct ContentView: View {
     @State private var currentFace: String = "face1"
     @State private var audioPlayer: AVAudioPlayer?
     
+    // ★ 新增：讓使用者選擇音效
+    @State private var selectedSoundEffect: String = "hit"
+    
     // 手勢相關狀態
     @State private var isPressing: Bool = false
-    @State private var pressDuration: Double = 0.0   // 單位：秒
+    @State private var pressDuration: Double = 0.0
     @State private var pressTimer: Timer?
-    @State private var jitter: Double = 0.0          // 隨機抖動值
+    @State private var jitter: Double = 0.0
     
     // 動畫用變數：控制縮放與旋轉
     @State private var transformScale: CGFloat = 1.5
@@ -66,7 +204,6 @@ struct ContentView: View {
     
     @State private var comboResetTimer: Timer?
     @State private var comboBaseCount: Int? = nil
-    
     
     // MARK: - AudioSession 設定
     private func configureAudioSession() {
@@ -96,19 +233,14 @@ struct ContentView: View {
             if isPressing {
                 pressDuration += 0.05
                 if pressDuration < 0.1 {
-                    // 點按效果：隨機浮動的縮放與旋轉
                     transformScale = CGFloat.random(in: 1.8...2.2)
                     transformRotation = tapRotationSign * Double.random(in: 20...40)
                 } else if pressDuration < 0.2 {
-                    // 介於 0.1 ~ 0.2 秒之間，保持隨機效果
                     transformScale = CGFloat.random(in: 1.4...2.6)
                     transformRotation = tapRotationSign * Double.random(in: 10...50)
                 } else {
-                    // 長按效果：開始依 (pressDuration - 0.2) 漸變
                     let progress = min((pressDuration - 0.2) / (3.0 - 0.2), 1.0)
-                    // 逐漸縮小：從 1.5 倍縮放到 0.5 倍
                     transformScale = 2 - progress * (1.5 - 0.5)
-                    // 加入隨機 jitter，範圍 ±10°
                     jitter = Double.random(in: -10...10)
                     transformRotation = jitter
                 }
@@ -124,6 +256,26 @@ struct ContentView: View {
         jitter = 0
     }
     
+    // MARK: - 震動與音效播放
+    private func triggerHaptic() {
+        let generator = UIImpactFeedbackGenerator(style: .heavy)
+        generator.prepare()
+        generator.impactOccurred()
+    }
+    
+    // ★ 根據是否為功德木魚版本來決定播放哪個音效檔案
+    private func playSound() {
+        let soundName: String = isMokugyoVersion ? "kokoko" : selectedSoundEffect
+        if let soundURL = Bundle.main.url(forResource: soundName, withExtension: "wav") {
+            do {
+                audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
+                audioPlayer?.play()
+            } catch {
+                print("無法播放音效：\(error.localizedDescription)")
+            }
+        }
+    }
+    
     // MARK: - 音效與強震動連續播放（使用遞迴）
     private func scheduleSoundSequence(count: Int, interval: Double) {
         guard count > 0 else { return }
@@ -136,34 +288,19 @@ struct ContentView: View {
         }
     }
     
-    // MARK: - 震動與音效播放
-    private func triggerHaptic() {
-        let generator = UIImpactFeedbackGenerator(style: .heavy)
-        generator.prepare()
-        generator.impactOccurred()
-    }
-    
-    private func playSound() {
-        if let soundURL = Bundle.main.url(forResource: "hit", withExtension: "wav") {
-            do {
-                audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
-                audioPlayer?.play()
-            } catch {
-                print("無法播放音效：\(error.localizedDescription)")
-            }
-        }
-    }
-    
     // MARK: - 更新統計數與圖片（每 50 次換圖）
     private func handleCountAndFaceChange() {
-        // 先更新 currentSessionCount 與其他統計數
         currentSessionCount += 1
         todayCount += 1
         var counts = loadSevenDayCounts()
         counts[6] = todayCount
         saveSevenDayCounts(counts)
         if currentSessionCount > 0 && currentSessionCount % 50 == 0 {
-            currentFace = "face\(Int.random(in: 1...18))"
+            if isMokugyoVersion {
+                currentFace = "mokugyo\(Int.random(in: 1...3))"
+            } else {
+                currentFace = "face\(Int.random(in: 1...18))"
+            }
         }
     }
     
@@ -174,13 +311,11 @@ struct ContentView: View {
         let todayKey = formatter.string(from: Date())
         let lastDateKey = UserDefaults.standard.string(forKey: "lastDateKey") ?? ""
         if todayKey != lastDateKey {
-            // 重置七天資料
             var counts = loadSevenDayCounts()
             counts.removeFirst()
             counts.append(0)
             saveSevenDayCounts(counts)
             
-            // 重置今天數值
             todayCount = 0
             todayComboCount = 0
             todayAppLaunchCount = 0
@@ -190,20 +325,34 @@ struct ContentView: View {
     
     // MARK: - Emoji 觸發函式
     private func triggerEmoji(geo: GeometryProxy) {
-        let emojis = ["💢", "😠", "😡", "🤬", "😤", "💩", "🥹", "🥺", "😱", "😨", "😰", "🤮", "🤢"]
-        emojiText = emojis.randomElement() ?? "💢"
-        // 隨機位置：限制在圖片上方區域
-        emojiXOffset = CGFloat.random(in: geo.size.width * 0.25 ... geo.size.width * 0.75)
-        emojiYOffset = CGFloat.random(in: geo.size.height * 0.05 ... geo.size.height * 0.33)
-        emojiScale = 0.1
-        showEmoji = true
-        withAnimation(.spring(response: 0.5, dampingFraction: 0.5)) {
-            emojiScale = 1.0
-        }
-        // 1秒後隱藏
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            withAnimation(.easeOut(duration: 0.3)) {
-                showEmoji = false
+        if isMokugyoVersion {
+            // 功德木魚模式下以圖片呈現，隨機設定位置與初始縮放
+            emojiXOffset = CGFloat.random(in: geo.size.width * 0.25 ... geo.size.width * 0.75)
+            emojiYOffset = CGFloat.random(in: geo.size.height * 0.05 ... geo.size.height * 0.33)
+            emojiScale = 0.1
+            showEmoji = true
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.5)) {
+                emojiScale = 1.0
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                withAnimation(.easeOut(duration: 0.3)) {
+                    showEmoji = false
+                }
+            }
+        } else {
+            let emojis = ["💢", "😠", "😡", "🤬", "😤", "💩", "🥹", "🥺", "😱", "😨", "😰", "🤮", "🤢"]
+            emojiText = emojis.randomElement() ?? "💢"
+            emojiXOffset = CGFloat.random(in: geo.size.width * 0.25 ... geo.size.width * 0.75)
+            emojiYOffset = CGFloat.random(in: geo.size.height * 0.05 ... geo.size.height * 0.33)
+            emojiScale = 0.1
+            showEmoji = true
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.5)) {
+                emojiScale = 1.0
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                withAnimation(.easeOut(duration: 0.3)) {
+                    showEmoji = false
+                }
             }
         }
     }
@@ -223,34 +372,28 @@ struct ContentView: View {
             comboCount += 1
         } else {
             comboCount = 1
-            // 以更新後的 currentSessionCount 當作連打起始基底
             comboBaseCount = currentSessionCount % 50
         }
-        // 如果今天的 combo 超過先前儲存的數值，就更新 todayComboCount
+        
         if comboCount > todayComboCount {
             todayComboCount = comboCount
         }
         
-        
         lastTapTime = now
         
-        // 產生隨機抖動偏移，再以動畫回復到原位
         comboJitter = CGSize(width: Double.random(in: -10...10), height: Double.random(in: -10...10))
         withAnimation(.easeOut(duration: 0.5)) {
             comboJitter = .zero
         }
-        // 取消先前的計時器（如果存在）
-        comboResetTimer?.invalidate()
-        // 重新設定 3 秒後重置 comboCount 的計時器
+        
         comboResetTimer?.invalidate()
         comboResetTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { _ in
             withAnimation(.easeOut(duration: 0.5)) {
                 comboCount = 0
-                comboBaseCount = nil  // 清除連打基底
+                comboBaseCount = nil
             }
         }
     }
-    
     
     let hasRequestedReviewKey = "hasRequestedReview"
     
@@ -289,30 +432,43 @@ struct ContentView: View {
                 
                 Spacer()
                 
-                
-                
-                // 使用 GeometryReader 包裝圖片，方便計算位置與隨機 emoji 出現位置
                 GeometryReader { geo in
                     ZStack(alignment: .top) {
-                        Image(currentFace)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .scaledToFit()
-                            .scaleEffect(transformScale)
-                            .rotationEffect(.degrees(transformRotation))
-                            .colorMultiply(isPressing ? Color.black.opacity(0.6) : Color.white)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .overlay(
-                                Rectangle()
-                                    .fill({
-                                        if isPressing {
-                                            return Color(red: 0.6, green: 0, blue: 0, opacity: 0.6)
+                        // 根據是否為功德木魚版本決定要呈現的圖片
+                        Group {
+                            if isMokugyoVersion {
+                                // Mokugyo 模式只呈現木魚圖片，背景透明，並縮小 0.5 倍
+                                Image(currentFace)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .background(Color.clear)
+                            } else {
+                                // 一般模式：依照自訂圖片或預設圖片顯示
+                                (useCustomImage && customImage != nil ? Image(uiImage: customImage!) : Image(currentFace))
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                            }
+                        }
+                        .scaledToFit()
+                        // 若為木魚模式則將 transformScale 乘以 0.5
+                        .scaleEffect(isMokugyoVersion ? transformScale * 0.5 : transformScale)
+                        .rotationEffect(.degrees(transformRotation))
+                        .colorMultiply(isPressing ? Color.black.opacity(0.6) : Color.white)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .overlay(
+                            Rectangle()
+                                .fill({
+                                    if isPressing {
+                                        // 若木魚模式按壓時不顯示紅色背景
+                                        return isMokugyoVersion ? Color.clear : Color(red: 0.6, green: 0, blue: 0, opacity: 0.6)
+                                    } else {
+                                        if isMokugyoVersion {
+                                            return Color.clear
                                         } else {
                                             let baseCount: Int = {
                                                 if comboCount > 0, let base = comboBaseCount {
                                                     return base
                                                 } else {
-                                                    // 非連打狀態回到原始淡紅色（有效值 0）
                                                     return 0
                                                 }
                                             }()
@@ -323,62 +479,58 @@ struct ContentView: View {
                                             let blueComponent = 0.6 * (1 - tapRatio)
                                             return Color(red: 1.0, green: greenComponent, blue: blueComponent).opacity(0.8)
                                         }
-                                    }())
-                                    .blendMode(.multiply)
-                                    .animation(.easeInOut(duration: 0.1), value: isPressing)
-                            )
-                            .gesture(
-                                DragGesture(minimumDistance: 0)
-                                    .onChanged { _ in
-                                        if !isPressing {
-                                            isPressing = true
-                                            startPressTimer()
-                                        }
                                     }
-                                    .onEnded { _ in
-                                        isPressing = false
-                                        stopPressTimer()
+                                }())
+                                .blendMode(.multiply)
+                                .animation(.easeInOut(duration: 0.1), value: isPressing)
+                        )
+                        .gesture(
+                            DragGesture(minimumDistance: 0)
+                                .onChanged { _ in
+                                    if !isPressing {
+                                        isPressing = true
+                                        startPressTimer()
+                                    }
+                                }
+                                .onEnded { _ in
+                                    isPressing = false
+                                    stopPressTimer()
+                                    handleCountAndFaceChange()
+                                    
+                                    if pressDuration < 0.2 {
+                                        triggerHaptic()
+                                        playSound()
+                                        triggerEmoji(geo: geo)
+                                        updateComboCount()
+                                        tapRotationSign = -tapRotationSign
+                                    } else {
+                                        let progress = min(pressDuration / 3.0, 1.0)
+                                        let targetScale = 1.5 + progress * (4.0 - 1.5)
+                                        let targetRotation = 15.0 + progress * (720.0 - 15.0)
                                         
-                                        // 先更新統計數（currentSessionCount、todayCount 等）
-                                        handleCountAndFaceChange()
+                                        withAnimation(.easeOut(duration: 0.3)) {
+                                            transformScale = targetScale
+                                            transformRotation = targetRotation
+                                        }
                                         
-                                        if pressDuration < 0.2 {
-                                            // 點按：觸發單次 emoji、音效與震動
+                                        if pressDuration >= 3.0 {
+                                            scheduleSoundSequence(count: 5, interval: 0.1)
+                                            scheduleEmojiSequence(count: 5, interval: 0.1, geo: geo)
+                                        } else if pressDuration >= 2.0 {
+                                            scheduleSoundSequence(count: 3, interval: 0.1)
+                                            scheduleEmojiSequence(count: 3, interval: 0.1, geo: geo)
+                                        } else if pressDuration >= 1.0 {
+                                            scheduleSoundSequence(count: 2, interval: 0.1)
+                                            scheduleEmojiSequence(count: 2, interval: 0.1, geo: geo)
+                                        } else {
                                             triggerHaptic()
                                             playSound()
-                                            triggerEmoji(geo: geo)
-                                            // 使用已更新的 currentSessionCount 來記錄連打基底
-                                            updateComboCount()
-                                            tapRotationSign = -tapRotationSign
-                                        } else {
-                                            // 長按效果：根據按壓時長觸發不同動畫
-                                            let progress = min(pressDuration / 3.0, 1.0)
-                                            let targetScale = 1.5 + progress * (4.0 - 1.5)
-                                            let targetRotation = 15.0 + progress * (720.0 - 15.0)
-                                            
-                                            withAnimation(.easeOut(duration: 0.3)) {
-                                                transformScale = targetScale
-                                                transformRotation = targetRotation
-                                            }
-                                            
-                                            if pressDuration >= 3.0 {
-                                                scheduleSoundSequence(count: 5, interval: 0.1)
-                                                scheduleEmojiSequence(count: 5, interval: 0.1, geo: geo)
-                                            } else if pressDuration >= 2.0 {
-                                                scheduleSoundSequence(count: 3, interval: 0.1)
-                                                scheduleEmojiSequence(count: 3, interval: 0.1, geo: geo)
-                                            } else if pressDuration >= 1.0 {
-                                                scheduleSoundSequence(count: 2, interval: 0.1)
-                                                scheduleEmojiSequence(count: 2, interval: 0.1, geo: geo)
-                                            } else {
-                                                triggerHaptic()
-                                                playSound()
-                                            }
                                         }
                                     }
-                            )
-                            .animation(.spring(response: 0.2, dampingFraction: 0.5), value: transformScale)
-                            .padding()
+                                }
+                        )
+                        .animation(.spring(response: 0.2, dampingFraction: 0.5), value: transformScale)
+                        .padding()
                         
                         if comboCount > 0 {
                             Text(String(format: NSLocalizedString("comboTapCount", comment: ""), comboCount))
@@ -391,18 +543,98 @@ struct ContentView: View {
                                 .padding([.top, .trailing], 16)
                         }
                         
-                        
                         if showEmoji {
-                            Text(emojiText)
-                                .font(.system(size: 50))
-                                .scaleEffect(emojiScale)
-                                .position(x: emojiXOffset, y: emojiYOffset)
+                            // 若為功德木魚模式，顯示 mokugyoemoji 圖片，否則呈現原有 emoji 文字
+                            if isMokugyoVersion {
+                                Image("mokugyoemoji")
+                                    .resizable()
+                                    .frame(width: 50, height: 50)
+                                    .scaleEffect(emojiScale)
+                                    .position(x: emojiXOffset, y: emojiYOffset)
+                            } else {
+                                Text(emojiText)
+                                    .font(.system(size: 50))
+                                    .scaleEffect(emojiScale)
+                                    .position(x: emojiXOffset, y: emojiYOffset)
+                            }
                         }
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 
                 Spacer()
+                
+                // 原有功能按鈕：切換圖片模式與音效選擇
+                HStack(spacing: 8) {
+                    Button(action: {
+                        if useCustomImage {
+                            useCustomImage = false
+                        } else {
+                            customImage = nil
+                            useCustomImage = true
+                            showingImagePicker = true
+                        }
+                    }) {
+                        Text(useCustomImage ?
+                             NSLocalizedString("use_default_image", comment: "Switch to default image") :
+                             NSLocalizedString("use_custom_image", comment: "Switch to custom image"))
+                            .font(.footnote)
+                            .padding(6)
+                            .background(Color.blue.opacity(0.2))
+                            .cornerRadius(4)
+                    }
+                    
+                    Menu {
+                        Button(NSLocalizedString("sound_effect_hit", comment: "Sound effect: hit (slap 1)")) {
+                            selectedSoundEffect = "hit"
+                        }
+                        Button(NSLocalizedString("sound_effect_hit1", comment: "Sound effect: hit1 (slap 2)")) {
+                            selectedSoundEffect = "hit1"
+                        }
+                        Button(NSLocalizedString("sound_effect_hit2", comment: "Sound effect: hit2 (slap 3)")) {
+                            selectedSoundEffect = "hit2"
+                        }
+                        Button(NSLocalizedString("sound_effect_ough", comment: "Sound effect: ough (howl)")) {
+                            selectedSoundEffect = "ough"
+                        }
+                        Button(NSLocalizedString("sound_effect_aaa", comment: "Sound effect: aaa (scream)")) {
+                            selectedSoundEffect = "aaa"
+                        }
+                        Button(NSLocalizedString("sound_effect_kokoko", comment: "Sound effect: kokoko (wood fish)")) {
+                            selectedSoundEffect = "kokoko"
+                        }
+                    } label: {
+                        Text("\(NSLocalizedString("select_sound_effect", comment: "Select sound effect")): \(selectedSoundEffect)")
+                            .font(.footnote)
+                            .padding(6)
+                            .background(Color.blue.opacity(0.2))
+                            .cornerRadius(4)
+                    }
+                }
+                .padding(4)
+                
+                // ★ 新增按鈕：切換功德木魚版本
+                Button(action: {
+                    isMokugyoVersion.toggle()
+                    if isMokugyoVersion {
+                        // 切換到功德木魚模式時：強制改成 mokugyo 隨機圖片與 kokoko 音效，且關閉自訂圖片
+                        currentFace = "mokugyo\(Int.random(in: 1...3))"
+                        selectedSoundEffect = "kokoko"
+                        useCustomImage = false
+                    } else {
+                        // 切換回一般模式，恢復預設圖片
+                        currentFace = "face1"
+                    }
+                }) {
+                    Text(isMokugyoVersion ?
+                         NSLocalizedString("switch_back_normal", comment: "Switch back to normal version") :
+                         NSLocalizedString("switch_mokugyo_version", comment: "Switch to Mokugyo version"))
+                        .font(.footnote)
+                        .padding(6)
+                        .background(Color.green.opacity(0.2))
+                        .cornerRadius(4)
+                }
+
                 
                 Text(String(format: NSLocalizedString("nextCharacter", comment: ""), 50 - (currentSessionCount % 50)))
                     .onAppear {
@@ -413,25 +645,24 @@ struct ContentView: View {
                 
                 VStack {
                     Button(NSLocalizedString("viewStatistics", comment: "")) {
-                        // 1. 請求 App Store 評分
                         requestReviewOnceIfNeeded()
-                        
-                        // 2. 開啟統計頁
                         showStatisticsView = true
                     }
-                    
-                    // 3. Navigation 目的地
                     .navigationDestination(isPresented: $showStatisticsView) {
                         StatisticsView(allDailyData: convertToDayCounts(loadSevenDayCounts()))
                     }
                 }
                 .padding()
+                
             }
             
-            Spacer() // 讓廣告顯示在底部
+            Spacer()
             
             BannerAdView(adUnitID: "ca-app-pub-9275380963550837/6757899905")
                 .frame(height: 50)
+        }
+        .sheet(isPresented: $showingImagePicker) {
+            ImagePicker(image: $customImage, isPresented: $showingImagePicker)
         }
     }
     
@@ -448,11 +679,7 @@ struct ContentView: View {
             print("ℹ️ 已發送過評價請求，這次不重複觸發")
         }
     }
-
     
-    /// 將七天的 [Int] 轉成 [DayCount]
-    /// - Parameter sevenDayCounts: 陣列中有 7 個整數，依序代表過去 7 天的點擊次數
-    /// - Returns: [DayCount]，每個元素包含 date, count, pressTriggerCount (可自行決定)
     func convertToDayCounts(_ sevenDayCounts: [Int]) -> [DayCount] {
         let calendar = Calendar.current
         let today = Date()
@@ -461,12 +688,11 @@ struct ContentView: View {
             let offset = index - (sevenDayCounts.count - 1)
             let date = calendar.date(byAdding: .day, value: offset, to: today) ?? today
             
-            // 如果 offset == 0，代表今天，使用 todayComboCount 與 todayAppLaunchCount
             if offset == 0 {
                 return DayCount(date: date,
                                 count: count,
-                                comboCount: todayComboCount,      // 從 AppStorage 讀取今天的最高 combo 次數
-                                appLaunchCount: todayAppLaunchCount) // 從 AppStorage 讀取今天的 app 啟動次數
+                                comboCount: todayComboCount,
+                                appLaunchCount: todayAppLaunchCount)
             } else {
                 return DayCount(date: date, count: count, comboCount: 0, appLaunchCount: 0)
             }
@@ -474,12 +700,7 @@ struct ContentView: View {
         
         return dayCounts.sorted { $0.date < $1.date }
     }
-
-
-
     
-    
-    // MARK: - 震動引擎初始化
     private func prepareHaptics() {
         do {
             engine = try CHHapticEngine()
@@ -489,7 +710,6 @@ struct ContentView: View {
         }
     }
     
-    // 計算數值等級（數字形式）
     private var comboLevel: Int {
         if comboCount >= 60 {
             return 6
@@ -499,7 +719,7 @@ struct ContentView: View {
             return comboCount / 10 + 1
         }
     }
-    // 根據等級決定字體粗細
+    
     private var comboLevelFontWeight: Font.Weight {
         switch comboLevel {
         case 1:
@@ -516,7 +736,7 @@ struct ContentView: View {
             return .black
         }
     }
-    // 依據 comboCount 決定等級顯示文字
+    
     private var comboLevelText: String {
         if comboCount >= 60 {
             return NSLocalizedString("comboLevel.proMaxAnger", comment: "")
@@ -536,8 +756,6 @@ struct ContentView: View {
             }
         }
     }
-
-
 }
 
 struct ContentView_Previews: PreviewProvider {
