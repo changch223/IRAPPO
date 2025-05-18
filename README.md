@@ -14,7 +14,7 @@
 ## 📽️ Elevator Pitch Demo
 
 <div align="center">
-  <img src="assets/IRAPPO_Elevator_Pitch%20.gif" width="400" alt="IRAPPO Demo GIF"/>
+  <img src="assets/IRAPPO_Elevator_Pitch%20.gif" width="600" alt="IRAPPO Demo GIF"/>
 </div>
 
 ---
