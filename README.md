@@ -6,7 +6,7 @@
 [Download on the App Store](https://apps.apple.com/us/app/irappo/id6743828397)  
 [Official Website (JP)](https://appfreelife.com/?p=22)  
 [Privacy Policy](https://www.notion.so/AGETEKO-LILY-1c35a1f77b5e80d38465e81f5e6d2cd7)  
-[🛠Support Page](https://changch223.github.io)  
+[Support Page](https://changch223.github.io)  
 [Development Backlog (JP)](https://www.notion.so/1c45a1f77b5e8015a40ac3d54d07b07a?v=1c45a1f77b5e8108a236000c4766a881)
 
 ---
