@@ -3,11 +3,11 @@
 
 **IRAPPO** is your emotional detox companion! A unique stress-release tapping app that transforms irritation into satisfaction through sound, haptics, and rage-catching characters.
 
-[📱 Download on the App Store](https://apps.apple.com/us/app/irappo/id6743828397)  
-[🌐 Official Website (JP)](https://appfreelife.com/?p=22)  
-[🔒 Privacy Policy](https://www.notion.so/AGETEKO-LILY-1c35a1f77b5e80d38465e81f5e6d2cd7)  
-[🛠️ Support Page](https://changch223.github.io)  
-[📋 Development Backlog (JP)](https://www.notion.so/1c45a1f77b5e8015a40ac3d54d07b07a?v=1c45a1f77b5e8108a236000c4766a881)
+[Download on the App Store](https://apps.apple.com/us/app/irappo/id6743828397)  
+[Official Website (JP)](https://appfreelife.com/?p=22)  
+[Privacy Policy](https://www.notion.so/AGETEKO-LILY-1c35a1f77b5e80d38465e81f5e6d2cd7)  
+[🛠Support Page](https://changch223.github.io)  
+[Development Backlog (JP)](https://www.notion.so/1c45a1f77b5e8015a40ac3d54d07b07a?v=1c45a1f77b5e8108a236000c4766a881)
 
 ---
 
@@ -28,16 +28,16 @@ With every explosive sound and angry face, IRAPPO captures your frustration and 
 
 ## 🌟 Key Features
 
-- 🎯 **Tap for stress relief**: Explosive sound + strong vibration with every hit.
-- 📈 **Irritation stats tracker**: Shows “Now”, “Today”, and “7-Day” anger data.
-- 🔥 **Long-press = Rage Burst**: Visual explosion effect for built-up frustration.
-- 🪵 **Mokugyo Merit Mode**: For discreet tapping with soft woodblock sound.
-- 📷 **Custom Photo Avatar**: Set your face (or anyone’s!) as the anger catcher.
-- 🎭 **Character Evolution**: New angry faces appear as you tap more.
-- 🏆 **Max Rank = ProMax**: Challenge yourself to reach the highest fury tier.
-- 🔊 **6 sound variations**: Pick your vibe.
-- 📊 **Combo & Launch Counter**: Swift Charts for satisfying tracking.
-- 💯 100% Free (Ad-supported)
+- **Tap for stress relief**: Explosive sound + strong vibration with every hit.
+- **Irritation stats tracker**: Shows “Now”, “Today”, and “7-Day” anger data.
+- **Long-press = Rage Burst**: Visual explosion effect for built-up frustration.
+- **Mokugyo Merit Mode**: For discreet tapping with soft woodblock sound.
+- **Custom Photo Avatar**: Set your face (or anyone’s!) as the anger catcher.
+- **Character Evolution**: New angry faces appear as you tap more.
+- **Max Rank = ProMax**: Challenge yourself to reach the highest fury tier.
+- **6 sound variations**: Pick your vibe.
+- **Combo & Launch Counter**: Swift Charts for satisfying tracking.
+- 100% Free (Ad-supported)
 
 ---
 
@@ -84,9 +84,9 @@ For issues, feedback, or bugs, please contact:
 
 ## 📦 Coming Soon
 
-- 🆕 New characters  
-- 🎵 More sound variations  
-- 🤖 Android version under development  
+- New characters  
+- More sound variations  
+- Android version under development  
 
 ---
 
@@ -118,13 +118,13 @@ For issues, feedback, or bugs, please contact:
 
 ## 🌟 特徴
 
-- 💥 タップごとに金魚脳キャラが反応！カウントアップ＆表情変化！
-- 💢 長押しで超変形！多重サウンドと連打エフェクト炸裂！
-- 📊 タップ記録・最高Combo数・起動回数などを可視化（7日間統計付き）
-- 🎉 50連打ごとに新しい顔がランダムで登場
-- 📱 シンプルでキャッチーなUI + アニメーション
-- 📈 Swift Charts + AdMob統合済み
-- 🔊 Sound + 強めのHapticsでスカッと体験！
+- タップごとに金魚脳キャラが反応！カウントアップ＆表情変化！
+- 長押しで超変形！多重サウンドと連打エフェクト炸裂！
+- タップ記録・最高Combo数・起動回数などを可視化（7日間統計付き）
+- 50連打ごとに新しい顔がランダムで登場
+- シンプルでキャッチーなUI + アニメーション
+- Swift Charts + AdMob統合済み
+- Sound + 強めのHapticsでスカッと体験！
 
 ---
 
