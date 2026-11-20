@@ -1,234 +1,189 @@
 //
 //  StatisticsView.swift
-//  YourApp
-//
-//  Created by Your Name on YYYY/MM/DD.
+//  紀錄頁（sheet）：今天的數字、心情、期間切換與每日擊退長條圖
 //
 
 import SwiftUI
+import SwiftData
 import Charts
 import GoogleMobileAds
 
-// MARK: - 資料模型
-
-/// 每日資料結構（請根據實際需求調整欄位）
-struct DayCount: Identifiable {
-    let id = UUID()
-    let date: Date          // 當天日期
-    let count: Int          // 當天點擊次數
-    let comboCount: Int     // 當天最高 combo 次數（可用作最高點擊次數）
-    let appLaunchCount: Int // 當天 app 啟動次數
-}
-
-/// 統計範圍選項
-enum StatisticsRange: String, CaseIterable, Identifiable {
-    case week
-    case month
-    case quarter
-    case year
-
-    var id: Self { self }
-
-    /// 提供對應的本地化文字
-    var localizedName: String {
-        switch self {
-        case .week:
-            return NSLocalizedString("statisticsRange.week", comment: "")
-        case .month:
-            return NSLocalizedString("statisticsRange.month", comment: "")
-        case .quarter:
-            return NSLocalizedString("statisticsRange.quarter", comment: "")
-        case .year:
-            return NSLocalizedString("statisticsRange.year", comment: "")
-        }
-    }
-}
-
-
-// MARK: - StatisticsView 主視圖
-
 struct StatisticsView: View {
-    /// 所有的每日資料（請確保資料範圍足夠，例如最近 365 天）
-    let allDailyData: [DayCount]
-    
-    /// 使用者目前選擇的統計範圍
+    /// 今日 / 7 天的手勢次數（沿用舊的統計）
+    @ObservedObject var stats: StatsBuffer
+    @Query(sort: \RunRecord.date) private var records: [RunRecord]
+    @Environment(\.uiScale) private var k
+
     @State private var selectedRange: StatisticsRange = .week
-    
+
+    private var calendar: Calendar { .current }
+
+    private var availableRanges: [StatisticsRange] {
+        StatisticsRange.available(oldest: records.first?.date, now: Date(), calendar: calendar)
+    }
+
+    private var today: RecordsSummary {
+        RecordsCalculator.summary(records.map(\.snapshot), range: .today, now: Date(), calendar: calendar)
+    }
+
+    /// 長條圖的期間：今天沒有「每日」可畫，改畫最近 7 天；其他期間就是自己
+    private var chartRange: StatisticsRange {
+        effectiveRange == .today ? .week : effectiveRange
+    }
+
+    private var summary: RecordsSummary {
+        RecordsCalculator.summary(records.map(\.snapshot), range: chartRange, now: Date(), calendar: calendar)
+    }
+
+    /// 期間內每一天一根，沒有資料的日子補 0（固定 domain）
+    private var chartDays: [DayBucket] {
+        let todayStart = calendar.startOfDay(for: Date())
+        let lookup = Dictionary(uniqueKeysWithValues: summary.days.map { (calendar.startOfDay(for: $0.date), $0) })
+        return (0..<chartRange.days).compactMap { i in
+            guard let d = calendar.date(byAdding: .day, value: i - (chartRange.days - 1), to: todayStart) else { return nil }
+            let hit = lookup[d]
+            return DayBucket(date: d, runs: hit?.runs ?? 0, kos: hit?.kos ?? 0)
+        }
+    }
+
+    /// 選到的期間若不在可用清單裡就退回 7 天
+    private var effectiveRange: StatisticsRange {
+        availableRanges.contains(selectedRange) ? selectedRange : .week
+    }
+
+    private var allTime: RecordsSummary {
+        RecordsCalculator.allTime(records.map(\.snapshot),
+                                  bestRunKO: UserDefaults.standard.integer(forKey: "bestRunKO"),
+                                  bestCombo: UserDefaults.standard.integer(forKey: "bestCombo"))
+    }
+
     var body: some View {
-        VStack(spacing: 16) {
-            // 範圍切換
-            Picker(NSLocalizedString("statisticsRange", comment: ""), selection: $selectedRange) {
-                ForEach(StatisticsRange.allCases) { range in
-                    Text(range.localizedName).tag(range)
-                }
+        SheetScaffold(title: L("records_title")) {
+            // 今天
+            SheetLab(text: L("range_today"))
+            HStack(alignment: .top, spacing: 8 * k) {
+                num(L("result_ko"), today.totalKOs)
+                num(L("result_taps"), today.totalTaps)
+                num(L("result_maxcombo"), today.maxCombo)
             }
-            .pickerStyle(.segmented)
-            .padding()
-            
-            // 柱狀圖：以每日點擊次數繪製
-            Chart(filteredData) { dayCount in
-                BarMark(
-                    x: .value("日付", formatDate(dayCount.date)),
-                    y: .value("タップ回数", dayCount.count)
-                )
-                .foregroundStyle(.red.gradient)
+
+            VStack(spacing: 0) {
+                row("🏅 " + L("records_best_streak"), today.bestStreak)
+                row("😌 " + L("mood_good"), today.moods[2])
+                row("😮‍💨 " + L("mood_ok"), today.moods[1])
+                row("😤 " + L("mood_bad"), today.moods[0])
             }
-            .frame(height: 300)
-            .padding(.horizontal)
-            
-            // 統計摘要：兩列四個項目
-            VStack(spacing: 16) {
-                HStack(spacing: 16) {
-                    summaryItemView(
-                        title: NSLocalizedString("totalTapCount", comment: ""),
-                        value: "\(totalTapCount)"
-                    )
-                    summaryItemView(
-                        title: NSLocalizedString("maxComboCount", comment: ""),
-                        value: "\(maxComboCount)"
-                    )
+
+            // 期間切換 + 每日擊退
+            rangePicker
+
+            if summary.runs == 0 {
+                Text(L("records_empty"))
+                    .uiFont(15, .bold)
+                    .foregroundColor(Theme.ink.opacity(0.65))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 18 * k)
+            } else {
+                SheetLab(text: L("records_chart_ko"))
+                let days = chartDays
+                Chart(days) { day in
+                    BarMark(x: .value("day", day.date, unit: .day), y: .value("KO", day.kos))
+                        .foregroundStyle(Theme.hot)
+                        .clipShape(UnevenRoundedRectangle(topLeadingRadius: 4, topTrailingRadius: 4))
                 }
-                HStack(spacing: 16) {
-                    summaryItemView(
-                        title: NSLocalizedString("averageTapCount", comment: ""),
-                        value: String(format: "%.1f", averageTapCount)
-                    )
-                    summaryItemView(
-                        title: NSLocalizedString("appLaunchCount", comment: ""),
-                        value: "\(totalAppLaunchCount)"
-                    )
+                .chartXScale(domain: (days.first?.date ?? Date())...(calendar.date(byAdding: .day, value: 1, to: days.last?.date ?? Date()) ?? Date()))
+                .chartXAxis {
+                    if days.count <= 7 {
+                        // 七欄：每天一根，X 軸標籤用星期
+                        AxisMarks(values: .stride(by: .day)) { _ in
+                            AxisValueLabel(format: .dateTime.weekday(.narrow), centered: true)
+                        }
+                    } else {
+                        AxisMarks()
+                    }
                 }
+                .frame(height: 130 * k)
+                SheetLab(text: String(format: L("records_runs_count"), summary.runs))
             }
-            .padding()
-            
-            Spacer() // 讓廣告顯示在底部
-            
-            BannerAdView(adUnitID: "ca-app-pub-9275380963550837/6757899905")
+
+            // 全部累計
+            SheetLab(text: L("records_all_time"))
+            VStack(spacing: 0) {
+                row(L("records_total_ko"), allTime.totalKOs)
+                row(L("records_best_streak_all"), allTime.bestStreak)
+                row(L("records_total_taps"), allTime.totalTaps)
+                row(L("records_max_combo"), allTime.maxCombo)
+            }
+
+            // 舊的手勢次數統計（今日 / 最近 7 天）
+            SheetLab(text: L("records_chart_taps"))
+            VStack(spacing: 0) {
+                row(L("todayCount"), stats.todayCount)
+                row(L("sevenDaysCount"), stats.sevenDayTotal)
+            }
+            Chart(Array(stats.counts.enumerated()), id: \.offset) { item in
+                BarMark(x: .value("day", item.offset), y: .value("taps", item.element))
+                    .foregroundStyle(Theme.hot)
+                    .clipShape(UnevenRoundedRectangle(topLeadingRadius: 3, topTrailingRadius: 3))
+            }
+            .chartXAxis(.hidden)
+            .frame(height: 70 * k)
+
+            BannerAdView(adUnitID: "ca-app-pub-9275380963550837/7125166187")
                 .frame(height: 50)
+                .frame(maxWidth: .infinity)
         }
-        .navigationTitle("statisticsTitle")
     }
-}
 
-// MARK: - 資料篩選與日期格式化
-extension StatisticsView {
-    /// 根據選擇的統計範圍，篩選出相應區間的資料
-    private var filteredData: [DayCount] {
-        let now = Date()
-        let calendar = Calendar.current
-        // 取得今天的開始時刻
-        let todayStart = calendar.startOfDay(for: now)
-        
-        switch selectedRange {
-        case .week:
-            // 往前推6天，再取得那天的開始時刻
-            if let rawStartDate = calendar.date(byAdding: .day, value: -6, to: todayStart) {
-                let startDate = calendar.startOfDay(for: rawStartDate)
-                return allDailyData.filter {
-                    let dataDay = calendar.startOfDay(for: $0.date)
-                    return dataDay >= startDate && dataDay <= todayStart
+    // 數字格：數字 28pt rounded black，標籤 15pt bold 65%
+    private func num(_ label: String, _ value: Int) -> some View {
+        VStack(alignment: .leading, spacing: 2 * k) {
+            Text("\(value)").uiFont(28, .black, number: true)
+                .lineLimit(1).minimumScaleFactor(0.6)
+            Text(label).uiFont(15, .bold)
+                .foregroundColor(Theme.ink.opacity(0.65))
+                .lineLimit(1).minimumScaleFactor(0.7)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
+    }
+
+    // row：字 18pt，數字粗體，分隔線 ink 12%
+    private func row(_ label: String, _ value: Int) -> some View {
+        HStack {
+            Text(label).uiFont(18, .medium)
+            Spacer(minLength: 8)
+            Text("\(value)").uiFont(21, .black, number: true)
+        }
+        .padding(.vertical, 10 * k)
+        .overlay(alignment: .bottom) {
+            Rectangle().fill(Theme.ink.opacity(0.12)).frame(height: 1)
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    /// 和主畫面模式切換同款的膠囊
+    private var rangePicker: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 0) {
+                ForEach(availableRanges) { range in
+                    let on = range == effectiveRange
+                    Button { selectedRange = range } label: {
+                        Text(range.localizedName)
+                            .uiFont(16, .bold)
+                            .lineLimit(1)
+                            .foregroundColor(on ? Theme.paper : Theme.ink)
+                            .padding(.vertical, 8 * k)
+                            .padding(.horizontal, 14 * k)
+                            .background(Capsule().fill(on ? Theme.ink : Color.clear))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityAddTraits(on ? .isSelected : [])
                 }
             }
-        case .month:
-            if let rawStartDate = calendar.date(byAdding: .day, value: -29, to: todayStart) {
-                let startDate = calendar.startOfDay(for: rawStartDate)
-                return allDailyData.filter {
-                    let dataDay = calendar.startOfDay(for: $0.date)
-                    return dataDay >= startDate && dataDay <= todayStart
-                }
-            }
-        case .quarter:
-            if let rawStartDate = calendar.date(byAdding: .day, value: -89, to: todayStart) {
-                let startDate = calendar.startOfDay(for: rawStartDate)
-                return allDailyData.filter {
-                    let dataDay = calendar.startOfDay(for: $0.date)
-                    return dataDay >= startDate && dataDay <= todayStart
-                }
-            }
-        case .year:
-            if let rawStartDate = calendar.date(byAdding: .day, value: -364, to: todayStart) {
-                let startDate = calendar.startOfDay(for: rawStartDate)
-                return allDailyData.filter {
-                    let dataDay = calendar.startOfDay(for: $0.date)
-                    return dataDay >= startDate && dataDay <= todayStart
-                }
-            }
+            .padding(4.5 * k)
+            .background(Capsule().fill(Theme.ink.opacity(0.08)))
         }
-        return []
-    }
-
-    /// 日期格式化 (例如 "MM/dd")
-    private func formatDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MM/dd"
-        return formatter.string(from: date)
-    }
-    
-}
-
-// MARK: - 統計數據計算
-extension StatisticsView {
-    /// 總點擊次數：將篩選資料中 count 累加
-    private var totalTapCount: Int {
-        filteredData.reduce(0) { $0 + $1.count }
-    }
-    
-    /// 最高點擊次數：這裡以當天最高 comboCount 為例
-    private var maxComboCount: Int {
-        filteredData.map { $0.comboCount }.max() ?? 0
-    }
-    
-    /// 平均點擊次數：算法為 (總點擊次數) ÷ (資料天數)
-    private var averageTapCount: Double {
-        guard !filteredData.isEmpty else { return 0 }
-        return Double(totalTapCount) / Double(filteredData.count)
-    }
-    
-    /// 統計 app 啟動次數：累計所有資料中的 appLaunchCount
-    private var totalAppLaunchCount: Int {
-        filteredData.reduce(0) { $0 + $1.appLaunchCount }
-    }
-}
-
-// MARK: - 統計摘要的 UI 小工具
-extension StatisticsView {
-    /// 統計摘要項目視圖
-    private func summaryItemView(title: String, value: String) -> some View {
-        VStack {
-            Text(title)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-            Text(value)
-                .font(.title2)
-                .bold()
-        }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(Color(uiColor: .secondarySystemBackground))
-        .cornerRadius(12)
-    }
-}
-
-// MARK: - 預覽
-struct StatisticsView_Previews: PreviewProvider {
-    static var previews: some View {
-        // 建立模擬資料：假設過去 365 天的隨機資料
-        let calendar = Calendar.current
-        let today = Date()
-        var dummyData = [DayCount]()
-        for i in 0..<365 {
-            if let date = calendar.date(byAdding: .day, value: -i, to: today) {
-                dummyData.append(
-                    DayCount(date: date,
-                             count: Int.random(in: 0...100),
-                             comboCount: Int.random(in: 0...50),
-                             appLaunchCount: Int.random(in: 0...5))
-                )
-            }
-        }
-        
-        return NavigationView {
-            StatisticsView(allDailyData: dummyData)
-        }
+        .accessibilityLabel(L("statisticsRange"))
     }
 }

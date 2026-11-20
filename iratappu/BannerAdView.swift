@@ -13,6 +13,7 @@ struct BannerAdView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> BannerView {
         let bannerView = BannerView(adSize: AdSizeBanner)
+        if AppEnvironment.isRunningTests { return bannerView }   // 單元測試 host：不載入廣告
         bannerView.adUnitID = adUnitID
         bannerView.rootViewController = UIApplication.shared.connectedScenes
             .compactMap { ($0 as? UIWindowScene)?.keyWindow }
