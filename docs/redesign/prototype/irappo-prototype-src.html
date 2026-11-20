@@ -1,0 +1,859 @@
+<title>IRAPPO 怒氣歸零</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: 可以玩的手機是主角，放在最上面；下面的提案文字安靜、單欄。熱度只存在於手機畫面裡。 */
+:root{
+  --bg:#F1F3F6; --surface:#FFFFFF; --ink:#141821; --muted:#596273; --line:#D8DDE5;
+  --anger:#D62B3A; --anger-soft:#FBE3E2; --relief:#0A8877; --relief-soft:#DCF2EE; --bezel:#141821;
+  /* 手機畫面內＝app 自己的配色（角色是黑線稿，所以永遠是亮面） */
+  --hot:#FF5548; --cool:#CDEFE8; --app-ink:#1C1014; --app-paper:#FFFFFF; --wood-bg:#FFF1CC; --wood:#8A5200; --spark:#FFD43B;
+  --num:"Dela Gothic One","Noto Sans TC",sans-serif;
+  --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0F1218; --surface:#191E28; --ink:#ECEFF4; --muted:#99A3B4; --line:#2B323F;
+  --anger:#FF6C70; --anger-soft:#3A1D21; --relief:#52D3C0; --relief-soft:#12332F; --bezel:#04060A; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0F1218; --surface:#191E28; --ink:#ECEFF4; --muted:#99A3B4; --line:#2B323F;
+  --anger:#FF6C70; --anger-soft:#3A1D21; --relief:#52D3C0; --relief-soft:#12332F; --bezel:#04060A; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.8;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:36px 80px}
+.wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:72px}
+h1,h2,h3,p,ul,ol{margin:0}
+h1{font-weight:900;font-size:clamp(34px,6.4vw,64px);line-height:1.2;letter-spacing:-.01em;text-wrap:balance}
+h1 em{font-style:normal;color:var(--anger)}
+h2{font-weight:900;font-size:clamp(22px,3.2vw,30px);line-height:1.4;text-wrap:balance}
+h3{font-size:17px;font-weight:700;line-height:1.5}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.14em;color:var(--muted)}
+.lead{color:var(--muted);max-width:38em}
+section{display:flex;flex-direction:column;gap:24px}
+.sec-head{display:flex;flex-direction:column;gap:8px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82em;background:var(--line);padding:.1em .4em;border-radius:4px;white-space:nowrap}
+:focus-visible{outline:3px solid var(--relief);outline-offset:3px}
+.num{font-family:var(--num);font-weight:400;font-variant-numeric:tabular-nums}
+
+.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:48px;align-items:center}
+.hero-copy{display:flex;flex-direction:column;gap:20px;min-width:0}
+.how{list-style:none;padding:0;display:grid;gap:10px;font-size:15px}
+.how li{display:grid;grid-template-columns:5.2em minmax(0,1fr);gap:12px;align-items:baseline}
+.how b{font-weight:900;color:var(--anger)}
+.proto{display:flex;flex-direction:column;align-items:center;gap:12px}
+.proto-note{font-size:13px;color:var(--muted);text-align:center;max-width:24em;line-height:1.6}
+@media (max-width:800px){.hero{grid-template-columns:minmax(0,1fr)}.proto{order:-1}}
+
+/* ---------- phone（全部用 em，--u 控制大小） ---------- */
+.phone{font-size:var(--u,10px);width:31em;height:64em;max-width:100%;border:.9em solid var(--bezel);border-radius:4.6em;
+  overflow:hidden;position:relative;background:var(--app-paper);color:var(--app-ink);flex:none;line-height:1.4;font-family:var(--body);
+  box-shadow:0 2.4em 5em -2em color-mix(in oklab,var(--anger) 45%,transparent)}
+.phone::after{content:"";position:absolute;top:1em;left:50%;width:8.6em;height:2.4em;margin-left:-4.3em;border-radius:2em;background:var(--bezel);z-index:20;pointer-events:none}
+.phone button{font:inherit;color:inherit;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.scr{position:absolute;inset:0;display:flex;flex-direction:column;--rage:1;
+  background:color-mix(in oklab,var(--hot) calc(var(--rage)*100%),var(--cool));transition:background .3s}
+.cooling .scr{transition:background 2s linear}
+[data-mode="moku"] .scr{background:var(--wood-bg)}
+.scr.tap{cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none}
+.top{display:flex;justify-content:space-between;align-items:center;gap:.8em;padding:5em 1.6em 0;transition:opacity .25s}
+.glass{background:color-mix(in oklab,var(--app-paper) 72%,transparent)}
+.ic{width:4.4em;height:4.4em;border-radius:50%;display:grid;place-items:center;flex:none}
+.ic svg{width:2em;height:2em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.seg{display:flex;border-radius:2.4em;padding:.35em}
+.seg button{font-size:1.25em;font-weight:700;padding:.5em .9em;border-radius:2em;background:transparent;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--app-ink);color:var(--app-paper)}
+.hp{display:grid;grid-template-columns:auto 1fr 3.2em;align-items:center;gap:.8em;padding:1.6em 2em 0;font-size:1em}
+.hp span{font-size:1.2em;font-weight:900}
+.hp b{font-size:1.5em;text-align:right}
+.bar{height:1.1em;border-radius:1em;background:color-mix(in oklab,var(--app-ink) 16%,transparent);overflow:hidden}
+.bar i{display:block;height:100%;width:100%;background:var(--app-ink);border-radius:1em;transition:width .18s}
+[data-mode="moku"] .hp{visibility:hidden}
+.stage{flex:1;position:relative;display:grid;place-items:center;min-height:0}
+.combo{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:1em;pointer-events:none;opacity:0;transition:opacity .2s}
+.combo b{font-size:11em;line-height:1;color:var(--app-paper)}
+.combo span{font-size:1.5em;font-weight:900;margin-top:.2em}
+[data-mode="moku"] .combo b{color:var(--wood)}
+.fwrap{position:relative;width:21em;height:21em;margin-top:5em}
+.face{width:100%;height:100%;object-fit:contain;transition:transform .09s ease-out;pointer-events:none;-webkit-user-drag:none}
+[data-mode="moku"] .face{transform-origin:50% 70%}
+.mk{position:absolute;font-size:3.6em;opacity:0;transition:opacity .2s;pointer-events:none}
+.m1{left:8%;top:22%;transform:rotate(-24deg)} .m2{right:4%;top:-4%}
+[data-dmg="1"] .m1,[data-dmg="2"] .m1{opacity:1}
+[data-dmg="2"] .m2{opacity:1;animation:spin 1.2s linear infinite}
+.m3{left:50%;top:-12%;font-size:7.5em;margin-left:-.62em}
+.m4{left:50%;top:-9%;transform:translateX(-50%);font-size:1.7em;font-weight:900;background:var(--app-ink);color:var(--spark);padding:.25em .9em;border-radius:.5em;letter-spacing:.2em;white-space:nowrap}
+.boss .fwrap::before{content:"";position:absolute;inset:-14%;border-radius:50%;z-index:-1;
+  background:radial-gradient(closest-side,color-mix(in oklab,var(--app-ink) 55%,transparent),transparent);animation:aura 1.2s ease-in-out infinite}
+@keyframes aura{50%{transform:scale(1.12);opacity:.65}}
+.boss .hp .bar{height:1.7em;outline:.2em solid var(--app-ink)}
+.boss .hp .bar i{background:repeating-linear-gradient(-45deg,var(--app-ink) 0 .8em,color-mix(in oklab,var(--app-ink) 76%,var(--hot)) .8em 1.6em)}
+.coach{position:absolute;left:50%;bottom:4.4em;transform:translate(-50%,1em);display:flex;align-items:center;gap:.7em;background:var(--app-ink);color:var(--app-paper);
+  border-radius:2em;padding:.6em 1.3em .6em .9em;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:3}
+.coach.on{opacity:1;transform:translate(-50%,0)}
+.coach span{font-size:1.35em;font-weight:700}
+.coach i{font-style:normal;font-size:2em;line-height:1;display:block}
+.a-tap i{animation:ctap .7s ease-in-out infinite}
+.a-swipe i{animation:cswipe 1s ease-in-out infinite}
+.a-hold i{animation:chold 1.6s ease-in-out infinite}
+@keyframes ctap{50%{transform:scale(.72)}}
+@keyframes cswipe{0%{transform:translateX(-.5em)}60%,100%{transform:translateX(.6em)}}
+@keyframes chold{0%,10%{transform:scale(1)}25%,80%{transform:scale(.72)}100%{transform:scale(1)}}
+.wlist{display:flex;flex-direction:column;gap:.8em}
+.wrow{display:grid;grid-template-columns:auto 1fr;gap:1.1em;align-items:center;text-align:left;width:100%;
+  background:color-mix(in oklab,var(--app-ink) 6%,transparent);border:2px solid transparent!important;border-radius:1.2em;padding:.9em 1.1em}
+.wrow i{font-style:normal;font-size:3em;line-height:1}
+.wrow b{display:block;font-size:1.45em;font-weight:900}
+.wrow small{display:block;font-size:1.15em;opacity:.72;line-height:1.45}
+.wrow.on{border-color:var(--app-ink)!important;background:var(--cool)}
+.wrow.lock{cursor:default}.wrow.lock i{filter:grayscale(1);opacity:.4}
+.help{display:grid;grid-template-columns:auto 1fr;gap:1em 1.2em;align-items:start}
+.help b{font-size:1.4em;font-weight:900;white-space:nowrap}
+.help span{font-size:1.3em;line-height:1.55}
+.armor .m3,.boss .m4{opacity:1}
+.boss .fwrap{scale:1.14}
+[data-mode="moku"] .mk{display:none}
+.weak{position:absolute;width:8em;height:8em;margin:-4em 0 0 -4em;border-radius:50%;border:.55em solid var(--spark);
+  box-shadow:0 0 0 .25em var(--app-ink),inset 0 0 0 .25em var(--app-ink);pointer-events:none;z-index:3;opacity:0}
+.weak::after{content:"弱點";position:absolute;inset:0;display:grid;place-items:center;font-size:1.5em;font-weight:900;color:var(--app-ink)}
+.weak.on{opacity:1;animation:weak 1.7s linear forwards}
+@keyframes weak{0%{transform:scale(1.5);opacity:0}12%{transform:scale(1);opacity:1}85%{transform:scale(.72);opacity:1}100%{transform:scale(.6);opacity:0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hint{position:absolute;bottom:.6em;left:0;right:0;text-align:center;font-size:1.3em;font-weight:700;transition:opacity .25s}
+.foot{padding:0 1.8em 2.8em;display:flex;justify-content:space-between;align-items:center;transition:opacity .25s}
+.chip{font-size:1.2em;font-weight:700;padding:.45em 1em;border-radius:2em}
+.live .top,.live .hint,.live .foot{opacity:0;pointer-events:none}
+.live .combo{opacity:1}
+.ring{position:absolute;width:26em;height:26em;margin-top:5em;pointer-events:none;opacity:0;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke:var(--app-ink);stroke-width:2.6}
+.charging .ring{opacity:1}
+.charging .ring circle{animation:fill 3s linear forwards}
+.charging .fwrap{animation:tremble .09s linear infinite}
+@keyframes fill{from{stroke-dasharray:0 100}to{stroke-dasharray:100 0}}
+@keyframes tremble{0%{transform:translate(-.2em,.1em) scale(.92)}50%{transform:translate(.2em,-.1em) scale(.9)}100%{transform:translate(-.1em,-.2em) scale(.92)}}
+.charge-lab{position:absolute;bottom:.6em;left:0;right:0;text-align:center;font-size:1.5em;font-weight:900;opacity:0}
+.charging .charge-lab{opacity:1}.charging .hint{opacity:0}
+.kotxt{position:absolute;left:0;right:0;top:36%;text-align:center;font-size:5.6em;z-index:2;font-weight:900;line-height:1;color:var(--app-paper);
+  -webkit-text-stroke:.09em var(--app-ink);paint-order:stroke fill;opacity:0;transform:scale(2.4) rotate(-8deg);pointer-events:none}
+.ko .kotxt{opacity:1;transform:scale(1) rotate(-8deg);transition:transform .22s cubic-bezier(.2,1.6,.4,1),opacity .1s}
+#fx,#dk{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4}
+.flash{position:absolute;inset:0;background:var(--app-paper);opacity:0;pointer-events:none;z-index:5}
+.ko .flash{animation:flash .5s ease-out}
+@keyframes flash{0%{opacity:.95}100%{opacity:0}}
+.ghost{position:absolute;inset:0;transition:transform .85s cubic-bezier(.2,.6,.3,1),opacity .85s}
+.face.drop{animation:dropin .3s cubic-bezier(.2,1.4,.4,1)}
+@keyframes dropin{from{transform:translateY(-26em) scale(.6);opacity:0}to{transform:none;opacity:1}}
+.cool{position:absolute;bottom:.6em;left:3em;right:3em;display:grid;gap:.5em;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.cool span{font-size:1.3em;font-weight:700}
+.cooling .cool{opacity:1}
+.cooling .cool i{animation:drain 2s linear forwards}
+.cooling .combo{opacity:.35}
+@keyframes drain{from{width:100%}to{width:0}}
+.fever .combo b{color:var(--spark);-webkit-text-stroke:.03em var(--app-ink)}
+.fever .fwrap{animation:fever .5s ease-in-out infinite}
+@keyframes fever{50%{filter:drop-shadow(0 0 1.2em var(--spark))}}
+/* sheets */
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--app-paper);border-radius:2.6em 2.6em 0 0;padding:2.4em 2em;
+  display:flex;flex-direction:column;gap:1.4em;transform:translateY(106%);transition:transform .38s cubic-bezier(.2,.9,.3,1);z-index:8;visibility:hidden}
+.sheet.open{transform:none;visibility:visible}
+.sheet.full{top:4.6em;overflow:auto}
+.sheet h4{margin:0;font-weight:900;font-size:2.8em;line-height:1.2}
+.shead{display:flex;justify-content:space-between;align-items:center}
+.x{width:3.4em;height:3.4em;border-radius:50%;background:color-mix(in oklab,var(--app-ink) 8%,transparent);font-size:1.2em;font-weight:700}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:.8em}
+.nums.four{grid-template-columns:repeat(4,1fr)}.nums.four b{font-size:2.3em}
+.rec{font-size:1.25em;font-weight:900;background:var(--spark);border-radius:.9em;padding:.5em .9em}
+.nums div{display:flex;flex-direction:column}
+.nums b{font-size:2.8em;line-height:1.1}
+.nums span,.q,.lab{font-size:1.15em;font-weight:700;opacity:.65}
+.unlock{display:flex;align-items:center;gap:1.2em;background:var(--cool);border-radius:1.4em;padding:.8em 1.2em}
+.unlock img{width:5em;height:5em;object-fit:contain;animation:reveal .9s .3s both}
+@keyframes reveal{from{filter:brightness(0);opacity:.3;transform:scale(.7) rotate(-20deg)}to{filter:none;opacity:1;transform:none}}
+.unlock b{font-size:1.4em;font-weight:900;display:block}.unlock span{font-size:1.1em;opacity:.7;font-weight:700}
+.moods{display:grid;grid-template-columns:repeat(3,1fr);gap:.7em}
+.moods button{font-size:1.15em;font-weight:700;background:color-mix(in oklab,var(--app-ink) 7%,transparent);border:2px solid transparent;border-radius:1em;padding:.7em .2em;display:flex;flex-direction:column;align-items:center;gap:.2em}
+.moods button i{font-style:normal;font-size:1.8em;line-height:1}
+.moods button[aria-pressed="true"]{border-color:var(--app-ink);background:var(--cool)}
+.again{font-size:1.6em;font-weight:900;background:var(--app-ink);color:var(--app-paper);border-radius:1em;padding:.75em}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:.8em}
+.cell{aspect-ratio:1;border-radius:1.2em;background:color-mix(in oklab,var(--hot) 22%,var(--app-paper));display:grid;place-items:center;padding:0;position:relative}
+.cell img{width:86%;height:86%;object-fit:contain}
+.cell.on{outline:.3em solid var(--app-ink)}
+.cell.lock{background:color-mix(in oklab,var(--app-ink) 8%,transparent);cursor:default}
+.cell.lock img{filter:brightness(0);opacity:.16}
+.cell.lock::after{content:"?";position:absolute;font-family:var(--num);font-size:2.4em;opacity:.45}
+.rows{display:flex;flex-direction:column}
+.row{display:flex;justify-content:space-between;align-items:center;font-size:1.35em;font-weight:500;padding:.6em 0;border-bottom:1px solid color-mix(in oklab,var(--app-ink) 12%,transparent)}
+.row b{font-size:1.2em}
+.bars{display:grid;grid-template-columns:repeat(7,1fr);gap:.6em;align-items:end;height:8em}
+.bars div{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:.3em;height:100%;font-weight:700}
+.bars i{display:block;width:100%;border-radius:.4em .4em 0 0;background:var(--hot)}
+.bars span{opacity:.6}
+
+/* ---------- arc strip ---------- */
+.arc{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.arc figure{margin:0;display:flex;flex-direction:column;gap:12px;min-width:0}
+.arc .frame{aspect-ratio:3/4;border-radius:18px;position:relative;overflow:hidden;display:grid;place-items:center;color:var(--app-ink);
+  background:color-mix(in oklab,var(--hot) calc(var(--rage)*100%),var(--cool))}
+.arc .frame img{width:70%;height:70%;object-fit:contain}
+.arc .frame b{position:absolute;top:8%;left:10%;right:10%;height:8px;border-radius:8px;background:color-mix(in oklab,var(--app-ink) 16%,transparent);overflow:hidden}
+.arc .frame b i{display:block;height:100%;background:var(--app-ink);border-radius:8px}
+.arc .frame .cap{position:absolute;bottom:8%;left:8%;right:8%;font-size:12px;font-weight:700;text-align:center}
+.arc .frame .big{position:absolute;font-weight:900;font-size:clamp(20px,4vw,40px);color:var(--app-paper);-webkit-text-stroke:.09em var(--app-ink);paint-order:stroke fill;transform:rotate(-8deg)}
+.arc figcaption{font-size:14px;color:var(--muted);line-height:1.65}
+.arc figcaption strong{display:block;color:var(--ink);font-size:15px}
+@media (max-width:640px){.arc{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ---------- loops / tables ---------- */
+.loops{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.loop{background:var(--surface);padding:24px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.loop .t{font-family:var(--num);font-size:30px;line-height:1.1;color:var(--anger)}
+.loop p{font-size:14.5px;color:var(--muted);line-height:1.7}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:14.5px;line-height:1.7}
+th,td{text-align:left;vertical-align:top;padding:14px 18px;border-bottom:1px solid var(--line)}
+th{font-size:12.5px;letter-spacing:.08em;color:var(--muted);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:700;white-space:nowrap}
+td.now{color:var(--muted)} td.new{background:var(--relief-soft)}
+th.new{color:var(--relief)}
+.steps{list-style:none;padding:0;display:grid;gap:0;border-top:2px solid var(--ink);counter-reset:s}
+.steps li{display:grid;grid-template-columns:2.2em minmax(0,4fr) minmax(0,7fr);gap:8px 20px;padding:18px 0;border-bottom:1px solid var(--line);counter-increment:s}
+.steps li::before{content:counter(s);font-family:var(--num);font-size:22px;line-height:1.3;color:var(--anger)}
+.steps p{font-size:14.5px;color:var(--muted)}
+@media (max-width:640px){.steps li{grid-template-columns:2.2em minmax(0,1fr)}.steps p{grid-column:2}}
+.note{font-size:14px;color:var(--muted);max-width:46em}
+.open-q{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px 32px}
+.open-q li{border-top:2px solid var(--ink);padding-top:12px;font-size:14.5px;color:var(--muted);line-height:1.7}
+.open-q b{display:block;color:var(--ink);font-size:16px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="hero-copy">
+    <p class="eyebrow">IRAPPO 設計提案 第 7 版 ／ 2026.11</p>
+    <h1>今天想<em>怎麼出氣</em>？</h1>
+    <p class="lead">武器改成只換特效，不換數值。上一版每把武器有不同的傷害和判定，結果是讓人去挑「最強的那把」。這一版每把傷害完全相同，差別在打下去的畫面、聲音和留下的痕跡：有人想砸碎螢幕，有人想留滿鞋印，有人只想聽啵啵聲。</p>
+    <ul class="how">
+      <li><b>點</b><span>拳。最快，連擊靠它疊</span></li>
+      <li><b>滑</b><span>巴掌。傷害 2.5 倍，能打掉頭盔</span></li>
+      <li><b>長按</b><span>蓄力重拳。蓄力時連擊凍結</span></li>
+      <li><b>弱點</b><span>點中黃圈就是爆擊，連擊 +3</span></li>
+      <li><b>武器</b><span>右下角切換。六種出氣方式，玩幾輪會陸續解鎖</span></li>
+    </ul>
+  </div>
+
+  <div class="proto">
+    <div class="phone" id="ph" data-mode="rage" data-dmg="0" style="--u:clamp(8.2px,2.7vw,10.5px)">
+      <div class="scr tap" id="scr" tabindex="0" aria-label="打擊區。點擊或按空白鍵打擊，長按蓄力">
+        <div class="top">
+          <button class="ic glass" id="bLog" aria-label="打開紀錄"><svg viewBox="0 0 20 20"><path d="M4 16V10M10 16V4M16 16v-8"/></svg></button>
+          <div class="seg glass" role="group" aria-label="模式">
+            <button id="mRage" aria-pressed="true">💢 發洩</button><button id="mMoku" aria-pressed="false">🪵 木魚</button>
+          </div>
+          <button class="ic glass" id="bDex" aria-label="打開圖鑑"><svg viewBox="0 0 20 20"><rect x="3" y="3" width="5.5" height="5.5" rx="1"/><rect x="11.5" y="3" width="5.5" height="5.5" rx="1"/><rect x="3" y="11.5" width="5.5" height="5.5" rx="1"/><rect x="11.5" y="11.5" width="5.5" height="5.5" rx="1"/></svg></button>
+        </div>
+        <div class="hp"><span id="hpl">第 1 個</span><div class="bar"><i id="hpb"></i></div><b class="num" id="hpn">100</b></div>
+        <div class="stage" id="stage">
+          <div class="combo"><b class="num" id="cn">0</b><span id="cl"></span></div>
+          <svg class="ring" viewBox="0 0 40 40"><circle cx="20" cy="20" r="15.9" pathLength="100"/></svg>
+          <div class="fwrap"><img class="face" id="face" src="{{F0}}" alt="生氣的角色" draggable="false"><span class="mk m1">🩹</span><span class="mk m2">💫</span><span class="mk m3">🪖</span><span class="mk m4">魔王</span></div>
+          <div class="kotxt" id="kot">擊退！</div>
+          <div class="hint" id="hint">點、滑、長按，都算數</div>
+          <div class="charge-lab">蓄力中 ・ 連擊保留</div>
+          <div class="coach" id="co"><i id="coi">👆</i><span id="cot"></span></div>
+          <div class="cool"><span>停手就收工 ・ 再打一下繼續</span><div class="bar"><i></i></div></div>
+        </div>
+        <div class="foot">
+          <button class="chip glass" id="bSnd" aria-pressed="true">🔊 聲音開</button>
+          <button class="chip glass" id="bHelp">？玩法</button>
+          <button class="chip glass" id="today" aria-label="換武器">👊 拳頭</button>
+        </div>
+      </div>
+      <canvas id="dk" aria-hidden="true"></canvas>
+      <div class="weak" id="wk"></div>
+      <canvas id="fx" aria-hidden="true"></canvas>
+      <div class="flash"></div>
+
+      <div class="sheet" id="res" aria-live="polite">
+        <h4 id="rH">呼——打完了。</h4>
+        <div class="nums four">
+          <div><b class="num" id="rK">0</b><span id="rKl">擊退</span></div>
+          <div><b class="num" id="rC">0</b><span>最高連擊</span></div>
+          <div><b class="num" id="rT">0</b><span>打擊</span></div>
+          <div><b class="num" id="rS">0</b><span>秒</span></div>
+        </div>
+        <div class="rec" id="rB" hidden></div>
+        <div class="unlock" id="rU"><img id="rUi" src="{{F0}}" alt=""><div><b>新角色加入圖鑑</b><span id="rUn">下一場的對手</span></div></div>
+        <div class="q" id="rq">現在感覺怎麼樣？</div>
+        <div class="moods" id="moods">
+          <button type="button" aria-pressed="false"><i>😤</i>還是很氣</button>
+          <button type="button" aria-pressed="false"><i>😮‍💨</i>好一點</button>
+          <button type="button" aria-pressed="false"><i>😌</i>爽了</button>
+        </div>
+        <button type="button" class="again" id="again">再來一輪</button>
+      </div>
+
+      <div class="sheet full" id="dex">
+        <div class="shead"><h4>圖鑑</h4><button class="x" data-close aria-label="關閉">✕</button></div>
+        <div class="lab" id="dexN"></div>
+        <div class="grid4" id="dexG"></div>
+        <div class="lab">每一輪第 4、8、12 個對手是魔王，同時也是新角色，打倒就收進圖鑑。點已解鎖的角色可以指定開場對手。正式版是 18 個角色，再加上自己的照片。</div>
+      </div>
+
+      <div class="sheet full" id="wp">
+        <div class="shead"><h4>武器</h4><button class="x" data-close aria-label="關閉">✕</button></div>
+        <div class="wlist" id="wpL"></div>
+        <div class="lab">武器不改傷害，只改打下去的樣子和聲音。原型把解鎖門檻調低了，方便試玩。</div>
+      </div>
+
+      <div class="sheet full" id="help">
+        <div class="shead"><h4>玩法</h4><button class="x" data-close aria-label="關閉">✕</button></div>
+        <div class="help">
+          <b>點</b><span>拳。畫面任何地方都算，連擊靠它疊。</span>
+          <b>滑</b><span>巴掌。快速滑過畫面，傷害是拳的 2.5 倍。</span>
+          <b>長按</b><span>蓄力重拳。按 1、2、3 秒放開，連打 2、3、5 下。蓄力時連擊不會斷。</span>
+          <b>黃圈</b><span>弱點。點中就是爆擊，連擊 +3。</span>
+          <b>鐵頭</b><span>戴頭盔的對手很硬。滑一下或蓄力一次，頭盔就掉。</span>
+          <b>魔王</b><span>每四個對手出現一次，血量兩倍。打倒就把新角色收進圖鑑。</span>
+          <b>武器</b><span>右下角換武器。傷害都一樣，差在特效和聲音，挑今天想要的出氣方式。</span>
+          <b>連擊</b><span>10 下傷害 ×1.5，30 下 ×2，60 下 ×3。</span>
+          <b>收工</b><span>停手 3 秒就結算。想打多久都可以。</span>
+        </div>
+      </div>
+
+      <div class="sheet full" id="log">
+        <div class="shead"><h4>今天</h4><button class="x" data-close aria-label="關閉">✕</button></div>
+        <div class="nums">
+          <div><b class="num" id="lK">0</b><span>擊退</span></div>
+          <div><b class="num" id="lT">0</b><span>打擊</span></div>
+          <div><b class="num" id="lC">0</b><span>最高連擊</span></div>
+        </div>
+        <div class="rows">
+          <div class="row"><span>🏅 最多連續擊退</span><b class="num" id="lR">0</b></div>
+          <div class="row"><span>😌 爽了</span><b class="num" id="l2">0</b></div>
+          <div class="row"><span>😮‍💨 好一點</span><b class="num" id="l1">0</b></div>
+          <div class="row"><span>😤 還是很氣</span><b class="num" id="l0">0</b></div>
+        </div>
+        <div class="lab">這週每天擊退數（範例資料）</div>
+        <div class="bars">
+          <div><i style="height:25%"></i><span>一</span></div><div><i style="height:50%"></i><span>二</span></div><div><i style="height:12%"></i><span>三</span></div><div><i style="height:100%"></i><span>四</span></div><div><i style="height:38%"></i><span>五</span></div><div><i style="height:0"></i><span>六</span></div><div><i style="height:12%"></i><span>日</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="proto-note">可以玩的原型。聲音是瀏覽器即時合成的，不是 app 裡的音檔；在辦公室請先按左下角靜音。</p>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">你提的問題</p>
+    <h2>長按為什麼會斷連擊，怎麼修</h2>
+    <p class="lead">連擊的規則是「0.6 秒內再打一下」。長按至少要按 1 秒，所以只要蓄力，連擊必斷，等於懲罰玩家用這個功能。修法是蓄力期間把連擊計時凍結：按住時不倒數，放開的每一下爆發都接著原本的連擊往上加。蓄力從「會斷連擊的冒險」變成「高連擊時的大招」。</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">出手的變化</p>
+    <h2>三種出手，加一個要瞄準的弱點</h2>
+    <p class="lead">都是手指本來就會的動作，不加任何按鈕。傷害都會再乘上連擊加成。</p>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>出手</th><th>手勢</th><th>基礎傷害</th><th>連擊</th><th>畫面與聲音</th></tr></thead>
+    <tbody>
+      <tr><td>拳</td><td>點一下</td><td>2</td><td>+1</td><td>角色抖一下，短促的一聲</td></tr>
+      <tr><td>巴掌</td><td>快速滑過畫面</td><td>5</td><td>+1</td><td>臉被甩向滑動的方向，留下一道白色軌跡，風聲加重擊。能打掉頭盔</td></tr>
+      <tr><td>蓄力重拳</td><td>長按 1、2、3 秒後放開</td><td>6，連打 2、3、5 下</td><td>每下 +1，蓄力時凍結</td><td>蓄力環繞一圈，角色發抖，放開連續爆發。能打掉頭盔</td></tr>
+      <tr><td>爆擊</td><td>點中發光的弱點</td><td>10</td><td>+3</td><td>黃圈隨機出現約 1.7 秒，沒點到也不扣分</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">對手的變化</p>
+    <h2>每四個對手一組：普通、鐵頭、普通、魔王</h2>
+    <p class="lead">對手有差別，三種出手才有理由存在。規則只有一條底線：連點永遠有效，只是比較慢。</p>
+  </div>
+  <div class="loops">
+    <div class="loop"><span class="t">普通</span><h3>拿來疊連擊</h3><p>血量隨擊退數加厚，從 60 到 300。怎麼打都行。</p></div>
+    <div class="loop"><span class="t">鐵頭 🪖</span><h3>教你換招</h3><p>戴頭盔時，點擊只剩四成傷害。滑一下或蓄力一次，頭盔就飛掉，之後恢復正常。</p></div>
+    <div class="loop"><span class="t">魔王</span><h3>一組的高潮</h3><p>體型更大，血量兩倍。登場時畫面喊出「魔王登場！」，頭上掛著「魔王」名牌，背後有暗色光暈，血條變粗變斜紋。同時是還沒解鎖的新角色，打倒就收進圖鑑。</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">武器</p>
+    <h2>六把武器，六種出氣的方式</h2>
+    <p class="lead">每把對應一種不同的痛快：衝擊、留下痕跡、破壞、爆發、四散、輕鬆。傷害和判定全部相同，所以選哪把只看心情。痕跡會留在畫面上越積越多，擊退時一次清空。</p>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>武器</th><th>痛快的類型</th><th>每一下</th><th>擊退時</th><th>聲音</th><th>解鎖（建議起點／原型）</th></tr></thead>
+    <tbody>
+      <tr><td>👊 拳頭</td><td>衝擊</td><td>火花四濺，白色衝擊環</td><td>角色旋轉飛出畫面</td><td>悶重的一拳</td><td>一開始就有</td></tr>
+      <tr><td>🩴 藍白拖</td><td>留下痕跡</td><td>紅色鞋印蓋在打的位置，越蓋越多</td><td>再補六個鞋印</td><td>清脆響亮的「啪」</td><td>巴掌 30 次／5 次</td></tr>
+      <tr><td>🔨 鐵鎚</td><td>破壞</td><td>螢幕從打的位置裂開，裂痕一直累積</td><td>整面碎裂，碎片噴出</td><td>玻璃碎裂聲</td><td>擊退 50 個／5 個</td></tr>
+      <tr><td>⚡ 雷電</td><td>爆發</td><td>閃電從上方劈到手指的位置，畫面白閃，留下焦痕</td><td>三道閃電連劈</td><td>雷聲加低頻轟鳴</td><td>蓄力 20 次／3 次</td></tr>
+      <tr><td>⌨️ 鍵盤</td><td>四散</td><td>鍵帽噴出來，帶著字母旋轉掉落、落地彈跳</td><td>鍵帽雨</td><td>喀噠兩聲</td><td>爆擊 20 次／3 次</td></tr>
+      <tr><td>🫧 泡泡紙</td><td>輕鬆</td><td>一串泡泡冒出來破掉，畫面不晃</td><td>大量泡泡一起破</td><td>啵</td><td>打擊 2000 下／80 下</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">泡泡紙是特地留給辦公室和不想太暴力的時候用的。正式版每把武器還要配不同的震動：鐵鎚短而銳利，泡泡紙輕而軟，雷電是一下重擊加一段餘震。之後加新武器只需要多一組特效和音效，不用動玩法和平衡。</p>
+</section>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">還能加什麼</p>
+    <h2>其他候選，以及我建議的順序</h2>
+    <p class="lead">延長遊玩時間的做法很多，但 IRAPPO 是在生氣時打開的，判斷標準是「會不會讓人更煩」。</p>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>順序</th><th>內容</th><th>為什麼</th></tr></thead>
+    <tbody>
+      <tr><td>1　段位與稱號</td><td>累計擊退換段位，從白帶到黑帶。結算頁顯示「再 3 個升段」，稱號可以放進分享圖</td><td>成本最低的長期目標，只需要一個累計數字。建議武器之後就做</td></tr>
+      <tr><td>2　場景</td><td>辦公室、捷運、家裡三種背景和環境音，用段位解鎖</td><td>對應實際使用的場面，純外觀，不影響平衡</td></tr>
+      <tr><td>3　分享卡</td><td>結算圖帶上擊退數、最高連擊、武器和稱號</td><td>帶來新使用者的主要管道。不放自訂照片</td></tr>
+      <tr><td>4　道具掉落</td><td>擊退時偶爾掉出短效加成，例如 5 秒傷害加倍</td><td>畫面會變忙。等核心玩法在真機上穩定後再評估</td></tr>
+      <tr><td>不建議　每日任務</td><td>每天三個小任務</td><td>使用者是生氣才打開，不是每天固定打開。任務會把消氣變成功課，沒完成還多一件煩心事</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">新手引導</p>
+    <h2>不擋第一下，邊打邊教</h2>
+    <p class="lead">使用者是在氣頭上打開 app 的，開場放教學頁等於又多一道牆。所以不做教學頁：每個玩法在第一次用得上的時候，用一顆小提示帶出來，做到就消失。每個提示最多出現兩次，之後不再打擾。想重看的人，待機畫面有「玩法」按鈕。</p>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>提示</th><th>什麼時候出現</th><th>什麼時候消失</th></tr></thead>
+    <tbody>
+      <tr><td>點任何地方開打</td><td>第一次打開</td><td>點了第一下</td></tr>
+      <tr><td>快速滑過畫面＝巴掌</td><td>點滿 8 下之後</td><td>滑了第一次，或 6 秒後</td></tr>
+      <tr><td>頭盔很硬：滑一下或長按</td><td>鐵頭上場的時候</td><td>頭盔被打掉，或鐵頭被擊退</td></tr>
+      <tr><td>長按蓄力，連擊不會斷</td><td>學會巴掌，而且連擊到 10 之後</td><td>蓄力了第一次，或 6 秒後</td></tr>
+      <tr><td>點中黃圈＝爆擊</td><td>弱點第一次出現的時候</td><td>點中，或黃圈消失</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">提示放在角色下方，不蓋住打擊區，也不需要點掉。手指圖示會示範動作：點是按壓，滑是橫移，長按是壓住不放。</p>
+</section>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">關卡結構</p>
+    <h2>為什麼不設血量上限</h2>
+    <p class="lead">第 2 版每下 2 點傷害、血量 100，再加上連擊加成，一場最多 35 到 50 下。連擊到 60 才有的 ProMax 永遠打不到，「打擊」和「最高連擊」每場都差不多，紀錄也就沒有意義。問題出在「結束」和「血量」綁在一起。下面是三種解法的比較。</p>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>做法</th><th>結束方式</th><th>好處</th><th>問題</th></tr></thead>
+    <tbody>
+      <tr><td>加大血量或分階段</td><td class="now">血量打空</td><td class="now">改動最小</td><td class="now">上限還在，只是變高。火氣小的時候反而打不完，變成負擔</td></tr>
+      <tr><td>限時 30 秒拚分數</td><td class="now">時間到</td><td class="now">分數沒有上限，長度固定好排廣告</td><td class="now">倒數計時會製造壓力，和「來消氣」的目的相反。火氣大的人 30 秒不夠</td></tr>
+      <tr><td>連續擊退（採用）</td><td class="new">自己停手</td><td class="new">打擊、連擊、擊退數都沒有上限。每 5 到 10 秒一次擊退，小高潮不斷。長度剛好等於你當下的火氣</td><td class="new">一輪長度不固定，廣告只能放在結算頁。高手可能打很久，後段對手要夠耐打</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">一輪的節奏</p>
+    <h2>熱度跟著連擊升，停手才降溫</h2>
+    <p class="lead">血條現在只屬於眼前這個對手，用來製造一次次的擊退。畫面顏色改成反映你的連擊：打得越兇越紅，手一停就在 2 秒內退回平靜色。</p>
+  </div>
+  <div class="arc">
+    <figure><div class="frame" style="--rage:.3"><b><i style="width:100%"></i></b><img src="{{F0}}" alt=""><span class="cap">第 1 個 ・ 血量 60</span></div><figcaption><strong>開場</strong>第一個對手很脆，5 秒內就能拿到第一次擊退。</figcaption></figure>
+    <figure><div class="frame" style="--rage:.65"><b><i style="width:70%"></i></b><img src="{{F1}}" alt="" style="transform:rotate(-12deg) scale(1.08)"><span class="big" style="top:22%">擊退 ×3</span><span class="cap">連擊 34 ・ 傷害 ×2</span></div><figcaption><strong>連續擊退</strong>下一個立刻補上，血量逐個加厚，連擊照樣累計。</figcaption></figure>
+    <figure><div class="frame" style="--rage:1"><b><i style="width:40%"></i></b><img src="{{F0}}" alt="" style="transform:rotate(10deg) scale(1.12)"><span class="big num" style="top:16%;transform:none;font-size:clamp(28px,6vw,56px)">87</span><span class="cap">ProMax 怒 ・ 傷害 ×3</span></div><figcaption><strong>ProMax</strong>連擊 60 之後進入爆發狀態。這是第 2 版打不到的地方。</figcaption></figure>
+    <figure><div class="frame" style="--rage:0"><img src="{{F1}}" alt="" style="width:46%;height:46%;opacity:.6"><span class="cap">擊退 7 ・ 最高連擊 87 ・ 41 秒</span></div><figcaption><strong>停手、結算</strong>冷卻條跑完就收工。有破紀錄會標出來。</figcaption></figure>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">改善計畫</p>
+    <h2>和第 3 版相比改了什麼</h2>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>面向</th><th>現在的 app</th><th>第 3 版</th><th class="new">這一版</th></tr></thead>
+    <tbody>
+      <tr><td>長按與連擊</td><td class="now">長按不計入連擊（<code>ContentView.swift:500-505</code>）</td><td class="now">蓄力超過 0.6 秒，連擊必斷</td><td class="new">蓄力時連擊凍結，放開的爆發接著往上加</td></tr>
+      <tr><td>出手方式</td><td class="now">點、長按</td><td class="now">點、長按</td><td class="new">點、滑、長按，傷害和反應各不相同</td></tr>
+      <tr><td>瞄準</td><td class="now">沒有</td><td class="now">沒有，點哪裡都一樣</td><td class="new">點哪裡都算，點中弱點是爆擊</td></tr>
+      <tr><td>對手</td><td class="now">只有外觀不同</td><td class="now">只有血量不同</td><td class="new">普通、鐵頭、魔王三種，四個一組循環</td></tr>
+      <tr><td>新角色</td><td class="now">每 50 下隨機換臉</td><td class="now">每輪第 3、6、9 個</td><td class="new">魔王就是新角色，每輪第 4、8、12 個</td></tr>
+      <tr><td>武器</td><td class="now">沒有。只有 6 種音效可選</td><td class="now">沒有</td><td class="new">六把武器，傷害相同，特效、聲音、殘留痕跡和擊退演出各不相同</td></tr>
+      <tr><td>教學</td><td class="now">只有一行「連打で撃退！」</td><td class="now">一行提示文字</td><td class="new">邊打邊出現的情境提示，加上可重看的「玩法」頁</td></tr>
+      <tr><td>魔王的標示</td><td class="now">沒有</td><td class="now">頭上一個皇冠，意思不清楚</td><td class="new">文字名牌、登場喊話、暗色光暈、斜紋粗血條</td></tr>
+      <tr><td>關卡長度、熱度、紀錄</td><td class="now">沒有結束</td><td class="now">連續擊退、停手結算</td><td class="new">沿用第 3 版</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">遊戲結構</p>
+    <h2>三個循環，三個回來的理由</h2>
+  </div>
+  <div class="loops">
+    <div class="loop"><span class="t">1 秒</span><h3>每一下都要爽</h3><p>點下去立刻有聲音、震動、火花和角色的反應。這一層做不好，後面兩層都不成立。</p></div>
+    <div class="loop"><span class="t">一輪</span><h3>一個接一個打下去</h3><p>每 5 到 10 秒一次擊退，連擊越疊越高。什麼時候停由你決定，停手後畫面冷下來，人也跟著停下來。</p></div>
+    <div class="loop"><span class="t">每天</span><h3>圖鑑和自己的紀錄</h3><p>18 個角色慢慢解鎖，最高連擊和連續擊退等著被打破。紀錄頁回答「我今天氣了幾次、打完有沒有比較好」。</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">技術對應</p>
+    <h2>原型裡的每個效果，在 iOS 上怎麼做</h2>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>原型裡的效果</th><th>SwiftUI 實作</th><th>和現有程式碼的關係</th></tr></thead>
+    <tbody>
+      <tr><td>火花與衝擊環</td><td><code>TimelineView(.animation)</code> 加 <code>Canvas</code> 畫粒子，一層疊在角色上</td><td>取代現在單一顆 emoji 的 <code>showEmoji</code> 狀態，可以同時出現很多個</td></tr>
+      <tr><td>疊加不中斷的音效</td><td><code>AVAudioEngine</code> 加數個 <code>AVAudioPlayerNode</code> 輪流播放；音高用 <code>AVAudioUnitTimePitch</code></td><td>取代每次新建的 <code>AVAudioPlayer</code>。原本的 6 個 wav 繼續用</td></tr>
+      <tr><td>力道不同的震動</td><td><code>CHHapticEngine</code> 的 transient 事件，強度和銳利度隨連擊調整</td><td>引擎已經在 <code>prepareHaptics()</code> 建好了，但目前只用到固定強度的 <code>UIImpactFeedbackGenerator</code></td></tr>
+      <tr><td>連擊熱度與冷卻</td><td>背景色用連擊數做插值；停手 1 秒後啟動 2 秒的降溫動畫和結算計時</td><td>沿用現在的紅色疊色邏輯（<code>ContentView.swift:468-480</code>），把 50 下重置改成跟連擊走</td></tr>
+      <tr><td>連續擊退</td><td>對手序號決定血量；擊退時舊角色飛出、新角色落下，連擊計時暫停 0.35 秒</td><td>取代 <code>handleCountAndFaceChange()</code> 裡每 50 下換臉的邏輯</td></tr>
+      <tr><td>擊退演出</td><td><code>withAnimation</code> 讓角色旋轉飛出，白色覆蓋層淡出，延遲後開結算 sheet</td><td>新增。結算頁同時是廣告和評分邀請的位置</td></tr>
+      <tr><td>滑動與蓄力判定</td><td>沿用現有的 <code>DragGesture(minimumDistance: 0)</code>，放開時看 <code>translation</code> 的距離和按住的時間，分成點、滑、蓄力</td><td>手勢已經在 <code>ContentView.swift:488</code>，只需要在 <code>onEnded</code> 分流</td></tr>
+      <tr><td>蓄力不斷連擊</td><td>放開時把 <code>lastTapTime</code> 設成現在，再觸發爆發；按住期間不啟動連擊重置計時</td><td>改 <code>updateComboCount()</code>，並讓長按也呼叫它</td></tr>
+      <tr><td>弱點</td><td>隨機座標的圓形 overlay，點擊座標和圓心距離小於半徑就算爆擊</td><td>新增。點擊座標從 <code>DragGesture</code> 的 <code>location</code> 取得</td></tr>
+      <tr><td>武器</td><td>一個 <code>Weapon</code> 結構，只放表現：音效組、命中特效、殘留痕跡、擊退演出、震動樣式。戰鬥數值不放在這裡</td><td>現有 6 個 wav 可以分配給武器，取代目前的音效選單（<code>ContentView.swift:587-612</code>）</td></tr>
+      <tr><td>殘留痕跡</td><td>粒子層下面再疊一層 <code>Canvas</code>，把鞋印、裂痕、焦痕存成陣列重畫，擊退時清空</td><td>新增</td></tr>
+      <tr><td>每把武器的震動</td><td><code>CHHapticEngine</code> 的事件參數隨武器換：強度、銳利度、是否帶餘震</td><td>和「力道不同的震動」共用同一個引擎</td></tr>
+      <tr><td>解鎖進度</td><td>巴掌、擊退、蓄力、爆擊、打擊五個累計計數，加上已解鎖清單，存在 <code>@AppStorage</code></td><td>新增</td></tr>
+      <tr><td>情境提示</td><td>每個提示一個 <code>@AppStorage</code> 布林值記錄是否學會；用 overlay 顯示，不攔截觸控</td><td>取代現在固定顯示的 <code>tapToDefeat</code> 文字</td></tr>
+      <tr><td>靜音與木魚</td><td>音訊類別改 <code>.ambient</code>，跟著靜音鍵；選擇用 <code>@AppStorage</code> 記住</td><td>現在是 <code>.playback</code>，而且選擇都是 <code>@State</code>，重開就忘</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">做的順序</p>
+    <h2>先把一下打爽，再談其他</h2>
+  </div>
+  <ol class="steps">
+    <li><h3>打擊感</h3><p>換音訊引擎、接上 CoreHaptics、加粒子層。畫面結構先不動，這一步出來就能感覺到差別。</p></li>
+    <li><h3>連續擊退與結算</h3><p>加入對手血量、擊退演出、跨對手連擊、冷卻條和結算頁。開啟時的全螢幕廣告移到結算頁。</p></li>
+    <li><h3>記住設定</h3><p>音效、模式、照片、解鎖進度全部存起來。音訊改成跟隨靜音鍵。</p></li>
+    <li><h3>圖鑑與紀錄</h3><p>圖鑑頁、每場存一筆紀錄（專案裡已經有 SwiftData 容器可以用），紀錄頁改成以「擊退數」和心情為主。</p></li>
+  </ol>
+</section>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">還沒驗證的事</p>
+    <h2>上線前要用真機和數字確認</h2>
+  </div>
+  <ul class="open-q">
+    <li><b>血量曲線</b>原型是 60 起跳、每個加 30、上限 300。擊退間隔拉太長會失去節奏，這組數字要用真機調。</li>
+    <li><b>廣告收入</b>拿掉開啟時的全螢幕廣告，曝光一定會少。結算頁的版位能補回多少，要上線量。</li>
+    <li><b>打真人照片</b>自訂照片是賣點，也可能讓人不舒服。建議照片只存在本機，分享圖不帶照片。</li>
+    <li><b>冷卻時間</b>現在是停 1 秒開始冷卻、再 2 秒結算。太短會誤判換手休息，太長會讓人乾等。</li>
+    <li><b>解鎖門檻</b>表裡的 30、50、20、20、2000 是起點。目標是一般使用者在頭一週內拿到第二把，一個月內拿齊。</li>
+    <li><b>會不會太複雜</b>原型加了滑動、弱點、鐵頭、魔王四樣。如果真機測起來覺得吵，建議先留滑動和魔王，弱點和鐵頭晚一版再上。</li>
+    <li><b>連擊判定</b>沿用 0.6 秒內算連擊。手速慢的人可能永遠到不了 ProMax，可以考慮放寬到 0.8 秒。</li>
+  </ul>
+</section>
+
+</div>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var ph=$('ph'),scr=$('scr'),stage=$('stage'),face=$('face'),cv=$('fx'),g=cv.getContext('2d');
+  var F={{FACES}},MOKU="{{MOKU}}";
+  var EMO=["💢","😠","😡","🤬","😤","💩","😱","🤮"];
+  var calm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var S={mode:'rage',hp:60,max:60,taps:0,combo:0,maxC:0,last:0,start:0,end:0,idx:0,cur:0,isNew:false,unlocked:3,run:0,got:[],ko:0,all:0,best:0,bestRun:0,recC:false,recRun:false,moods:[0,0,0],merit:0,busy:false,sound:true,sign:1};
+  var idle=null,endT=null,koT=null,weakT=null,down=0,dx=0,dy=0,sx=0,sy=0,moved=false,holdT=null,wk=$('wk');
+
+  /* ---- canvas 粒子 ---- */
+  var W=0,H=0,P=[],shake=0,raf=0;
+  var dk=$('dk'),dg=dk.getContext('2d'),fl=document.querySelector('.flash');
+  function fit(){var d=Math.min(window.devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;cv.width=dk.width=W*d;cv.height=dk.height=H*d;g.setTransform(d,0,0,d,0,0);dg.setTransform(d,0,0,d,0,0)}
+  function clearDk(){dg.clearRect(0,0,W,H)}
+  fit();window.addEventListener('resize',fit);
+  function loop(){raf=0;g.clearRect(0,0,W,H);
+    for(var i=P.length-1;i>=0;i--){var p=P[i];p.t+=1/60;var k=p.t/p.life;if(k>=1){P.splice(i,1);continue}
+      p.x+=p.vx;p.y+=p.vy;p.vx*=.94;p.vy=p.vy*.94+(p.g||0);g.globalAlpha=1-k*k;
+      if(p.k==='s'){g.strokeStyle=p.c;g.lineWidth=p.s*(1-k)+.5;g.lineCap='round';g.beginPath();g.moveTo(p.x,p.y);g.lineTo(p.x-p.vx*2.4,p.y-p.vy*2.4);g.stroke()}
+      else if(p.k==='z'){g.strokeStyle='#FFFFFF';g.lineWidth=7*(1-k)+1.5;g.lineJoin='round';g.shadowColor='#FFD43B';g.shadowBlur=18;
+        g.beginPath();g.moveTo(p.pts[0][0],p.pts[0][1]);for(var j=1;j<p.pts.length;j++)g.lineTo(p.pts[j][0],p.pts[j][1]);g.stroke();g.shadowBlur=0}
+      else if(p.k==='k'){p.a+=p.va;if(p.y>H-p.s&&p.vy>0){p.vy*=-.55;p.va*=.6}
+        g.save();g.translate(p.x,p.y);g.rotate(p.a);g.fillStyle='#FFFFFF';g.strokeStyle='#1C1014';g.lineWidth=2;
+        g.fillRect(-p.s/2,-p.s/2,p.s,p.s);g.strokeRect(-p.s/2,-p.s/2,p.s,p.s);
+        g.fillStyle='#1C1014';g.font='700 '+(p.s*.6)+'px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(p.txt,0,1);g.restore();g.textBaseline='alphabetic'}
+      else if(p.k==='b'){var br=p.s*(1+k*.5);g.strokeStyle='#FFFFFF';g.lineWidth=2.5;g.beginPath();g.arc(p.x,p.y,br,0,6.3);g.stroke();
+        g.fillStyle='rgba(255,255,255,.35)';g.fill();g.beginPath();g.arc(p.x-br*.35,p.y-br*.35,br*.2,0,6.3);g.fillStyle='#FFFFFF';g.fill()}
+      else if(p.k==='l'){g.strokeStyle=p.c;g.lineWidth=16*(1-k)+1;g.lineCap='round';g.beginPath();g.moveTo(p.x,p.y);g.lineTo(p.x2,p.y2);g.stroke()}
+      else if(p.k==='r'){g.strokeStyle=p.c;g.lineWidth=5*(1-k)+.5;g.beginPath();g.arc(p.x,p.y,p.s+k*p.grow,0,6.3);g.stroke()}
+      else{g.font='900 '+p.s+'px "Noto Sans TC",sans-serif';g.textAlign='center';g.fillStyle=p.c;g.fillText(p.txt,p.x,p.y)}
+    }
+    g.globalAlpha=1;
+    if(shake>.4){stage.style.transform='translate('+((Math.random()-.5)*shake)+'px,'+((Math.random()-.5)*shake)+'px)';shake*=.85}
+    else if(shake){shake=0;stage.style.transform=''}
+    if(P.length||shake)raf=requestAnimationFrame(loop)}
+  function kick(){if(!raf)raf=requestAnimationFrame(loop)}
+  function impact(x,y,pw){var n=Math.round(7+pw*5);
+    for(var i=0;i<n;i++){var a=Math.random()*6.283,v=(3+Math.random()*6)*pw;
+      P.push({k:'s',x:x,y:y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,g:.25,t:0,life:.3+Math.random()*.25,s:3+pw*1.5,c:i%3===0?'#FFFFFF':i%3===1?'#FFD43B':'#1C1014'})}
+    P.push({k:'r',x:x,y:y,vx:0,vy:0,t:0,life:.28,s:6,grow:46*pw,c:'#FFFFFF'});
+    if(!calm)shake=Math.max(shake,3+pw*5);kick()}
+  function floatTxt(x,y,txt,size,c){P.push({k:'t',x:x,y:y,vx:(Math.random()-.5)*1.4,vy:-2.2,t:0,life:.85,s:size,txt:txt,c:c||'#1C1014'});kick()}
+
+  /* ---- 合成音效 ---- */
+  var AC=null,NB=null;
+  function ac(){if(!S.sound)return null;
+    if(!AC){var C=window.AudioContext||window.webkitAudioContext;if(!C)return null;
+      try{AC=new C()}catch(e){return null}
+      NB=AC.createBuffer(1,Math.floor(AC.sampleRate*.6),AC.sampleRate);var d=NB.getChannelData(0);for(var i=0;i<d.length;i++)d[i]=Math.random()*2-1}
+    if(AC.state==='suspended')AC.resume();return AC}
+  function env(node,t,peak,dur){var gn=AC.createGain();gn.gain.setValueAtTime(peak,t);gn.gain.exponentialRampToValueAtTime(.001,t+dur);node.connect(gn);gn.connect(AC.destination)}
+  function nz(t,type,freq,q,peak,dur){var n=AC.createBufferSource();n.buffer=NB;n.playbackRate.value=.8+Math.random()*.5;
+    var f=AC.createBiquadFilter();f.type=type;f.frequency.value=freq;f.Q.value=q;n.connect(f);env(f,t,peak,dur);n.start(t);n.stop(t+dur+.05)}
+  function tone(t,type,f0,f1,peak,dur){var o=AC.createOscillator();o.type=type;o.frequency.setValueAtTime(f0,t);if(f1)o.frequency.exponentialRampToValueAtTime(f1,t+dur);env(o,t,peak,dur);o.start(t);o.stop(t+dur+.05)}
+  function slap(pw){if(!ac())return;var t=AC.currentTime,up=Math.min(S.combo,50)*14;
+    nz(t,'bandpass',1300+Math.random()*700+up,.8,.42*pw,.1);tone(t,'sine',200+up*.4,55,.5*pw,.13)}
+  function wood(){if(!ac())return;var t=AC.currentTime,d=(Math.random()-.5)*30;
+    tone(t,'sine',830+d,0,.38,.2);tone(t,'triangle',1245+d,0,.14,.08);nz(t,'bandpass',2400,2,.12,.03)}
+  function boom(){if(!ac())return;var t=AC.currentTime;tone(t,'sine',150,30,.8,.7);nz(t,'lowpass',700,.5,.5,.45);nz(t,'bandpass',2000,.7,.35,.12)}
+  function chime(){if(!ac())return;var t=AC.currentTime;[523,784,1047].forEach(function(f,i){tone(t+i*.1,'sine',f,0,.12,.9)})}
+  function clang(){if(!ac())return;var t=AC.currentTime;tone(t,'square',1900,1300,.07,.16);tone(t,'sine',2700,0,.1,.22)}
+  function whoosh(){if(!ac())return;nz(AC.currentTime,'highpass',2600,.6,.16,.14)}
+  function ping(){if(!ac())return;var t=AC.currentTime;tone(t,'sine',1568,0,.16,.3);tone(t+.05,'sine',2093,0,.12,.3)}
+  function buzz(ms){try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}}
+
+  /* ---- 武器：傷害相同，只換特效、聲音、痕跡和擊退演出 ---- */
+  var WL=[
+    {id:'fist',e:'👊',n:'拳頭',d:'火花和衝擊環',win:600,own:true},
+    {id:'slipper',e:'🩴',n:'藍白拖',d:'鞋印留在畫面上，越蓋越多',win:600,need:['swipes',5],lab:'巴掌'},
+    {id:'hammer',e:'🔨',n:'鐵鎚',d:'螢幕裂開，擊退時整面碎掉',win:600,need:['kos',5],lab:'擊退'},
+    {id:'bolt',e:'⚡',n:'雷電',d:'閃電劈下來，留下焦痕',win:600,need:['charges',3],lab:'蓄力'},
+    {id:'kb',e:'⌨️',n:'鍵盤',d:'鍵帽噴得到處都是',win:600,need:['crits',3],lab:'爆擊'},
+    {id:'bubble',e:'🫧',n:'泡泡紙',d:'啵啵啵。安靜、不晃',win:600,need:['taps',80],lab:'打擊'}],
+    WP=WL[0],ST={swipes:0,kos:0,charges:0,crits:0,taps:0};
+  function checkUnlock(){WL.forEach(function(w){if(w.own||ST[w.need[0]]<w.need[1])return;
+    w.own=true;(S.gotW=S.gotW||[]).push(w.n);coach('w-'+w.id,'解鎖武器：'+w.n,'none',true,w.e);chime()})}
+  function rnd(a){return(Math.random()-.5)*a}
+  function wsound(pw){
+    var id=WP.id;if(!ac())return;var t=AC.currentTime;
+    if(id==='fist'){slap(pw);return}
+    if(id==='slipper'){slap(pw);nz(t,'bandpass',3200,1.2,.32*pw,.06);return}
+    if(id==='hammer'){slap(pw*.6);nz(t,'highpass',5200,.7,.28,.09);tone(t,'sine',3100+rnd(600),2300,.06,.14);tone(t+.03,'sine',4200+rnd(800),0,.04,.1);return}
+    if(id==='bolt'){nz(t,'bandpass',1300,.5,.5*pw,.22);tone(t,'sawtooth',95,38,.3,.28);return}
+    if(id==='kb'){nz(t,'highpass',4000,1,.28,.025);nz(t+.05,'highpass',3200,1,.2,.03);tone(t,'sine',180,90,.2*pw,.06);return}
+    tone(t,'sine',900+rnd(200),260,.3,.07)}
+  /* 殘留在畫面上的痕跡（第二層 canvas） */
+  function print(x,y){var a=W*.055,b=W*.12;dg.save();dg.translate(x,y);dg.rotate(rnd(1.4));
+    dg.fillStyle='rgba(200,30,45,.3)';dg.beginPath();dg.ellipse(0,0,a,b,0,0,6.3);dg.fill();
+    dg.strokeStyle='rgba(200,30,45,.6)';dg.lineWidth=3;dg.lineCap='round';dg.lineJoin='round';
+    dg.beginPath();dg.moveTo(-a*.75,-b*.1);dg.lineTo(0,-b*.62);dg.lineTo(a*.75,-b*.1);dg.stroke();dg.restore()}
+  function crack(x,y,pw){var n=5+Math.floor(Math.random()*3),u=W/300;
+    for(var i=0;i<n;i++){var a=i/n*6.283+rnd(.7),len=(36+Math.random()*70)*pw*u,px=x,py=y,pts=[[x,y]];
+      for(var j=1;j<=4;j++){px+=Math.cos(a)*len/4+rnd(10*u);py+=Math.sin(a)*len/4+rnd(10*u);pts.push([px,py])}
+      [['rgba(28,16,20,.55)',3.5],['rgba(255,255,255,.95)',1.6]].forEach(function(st){dg.strokeStyle=st[0];dg.lineWidth=st[1];dg.lineJoin='round';
+        dg.beginPath();dg.moveTo(pts[0][0],pts[0][1]);for(var q=1;q<pts.length;q++)dg.lineTo(pts[q][0],pts[q][1]);dg.stroke()})}}
+  function scorch(x,y){var r=W*.12,gr=dg.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,'rgba(20,10,12,.5)');gr.addColorStop(1,'rgba(20,10,12,0)');
+    dg.fillStyle=gr;dg.beginPath();dg.arc(x,y,r,0,6.3);dg.fill()}
+  /* 會動的特效（粒子層） */
+  function zap(o){if(calm||!fl.animate)return;fl.animate([{opacity:o||.6},{opacity:0}],{duration:170,easing:'ease-out'})}
+  function bolt(x,y){var pts=[[x+rnd(90),0]],n=7;for(var i=1;i<n;i++)pts.push([pts[0][0]+(x-pts[0][0])*i/n+rnd(44),y*i/n]);pts.push([x,y]);
+    P.push({k:'z',pts:pts,x:0,y:0,vx:0,vy:0,t:0,life:.2})}
+  var KEYS='QWERTYASDFGZXCVB';
+  function keys(x,y,n){for(var i=0;i<n;i++)P.push({k:'k',x:x,y:y,vx:rnd(11),vy:-4-Math.random()*7,g:.6,a:rnd(6),va:rnd(.6),t:0,life:1.15,s:W*.062,txt:KEYS[Math.floor(Math.random()*KEYS.length)]})}
+  function bubbles(x,y,n,sp){for(var i=0;i<n;i++)P.push({k:'b',x:x+rnd(sp||60),y:y+rnd(sp||60),vx:rnd(2),vy:-.8-Math.random()*2,t:Math.random()*-.15,life:.35+Math.random()*.4,s:5+Math.random()*13})}
+  function wfx(x,y,pw){
+    var id=WP.id;P.push({k:'t',x:x,y:y+14,vx:0,vy:0,t:0,life:.28,s:42,txt:WP.e,c:'#1C1014'});
+    if(id==='fist')impact(x,y,pw);
+    else if(id==='slipper'){impact(x,y,pw*.6);print(x,y)}
+    else if(id==='hammer'){impact(x,y,pw*.8);crack(x,y,pw)}
+    else if(id==='bolt'){bolt(x,y);scorch(x,y);impact(x,y,pw*.7);zap(.5)}
+    else if(id==='kb'){keys(x,y,3+Math.round(pw*2));if(!calm)shake=Math.max(shake,2+pw*3)}
+    else bubbles(x,y,5+Math.round(pw*3));
+    kick()}
+  function wko(){
+    var id=WP.id,cx=W/2,cy=H*.48,i;
+    if(id==='slipper')for(i=0;i<6;i++)print(cx+rnd(W*.5),cy+rnd(H*.3));
+    else if(id==='hammer'){for(i=0;i<4;i++)crack(cx+rnd(W*.6),cy+rnd(H*.4),1.6);
+      for(i=0;i<46;i++){var a=Math.random()*6.283,v=4+Math.random()*13;P.push({k:'s',x:cx+rnd(W*.5),y:cy+rnd(H*.3),vx:Math.cos(a)*v,vy:Math.sin(a)*v,g:.5,t:0,life:.5+Math.random()*.4,s:6,c:'#FFFFFF'})}
+      if(ac()){var t=AC.currentTime;nz(t,'highpass',4500,.6,.5,.3);tone(t,'sine',3600,1800,.08,.3)}}
+    else if(id==='bolt'){for(i=0;i<3;i++)(function(d){setTimeout(function(){bolt(cx+rnd(W*.6),cy+rnd(H*.2));zap(.8);kick()},d)})(i*90)}
+    else if(id==='kb')keys(cx,cy,26);
+    else if(id==='bubble')bubbles(cx,cy,34,W*.7);
+    kick()}
+
+  /* ---- 情境提示：做到就消失，最多出現兩次 ---- */
+  var CO={cur:null,done:{},n:{},t:null},co=$('co');
+  function hideCoach(){clearTimeout(CO.t);CO.cur=null;co.className='coach'}
+  function doneCoach(k){CO.done[k]=1;if(CO.cur===k)hideCoach()}
+  function coach(k,txt,anim,force,icon){
+    if(CO.done[k]||CO.cur===k||(CO.cur&&!force))return;clearTimeout(CO.t);CO.cur=k;CO.n[k]=(CO.n[k]||0)+1;
+    $('cot').textContent=txt;$('coi').textContent=icon||'👆';co.className='coach on a-'+anim;
+    CO.t=setTimeout(function(){if(CO.n[k]>=2)CO.done[k]=1;hideCoach()},k==='tap'?60000:6000)}
+
+  /* ---- 狀態 ---- */
+  function level(c){if(c>=60)return'🤬 ProMax 怒';if(c>=50)return'😡 Max 怒';var l=Math.floor(c/10)+1;return l<=2?'😌 還行':l<=4?'💢 中怒':'🔥 暴怒'}
+  function setHp(){var r=S.hp/S.max;$('hpb').style.width=(r*100)+'%';$('hpn').textContent=Math.ceil(S.hp);ph.dataset.dmg=r<=.33?2:r<=.66?1:0}
+  function heat(){scr.style.setProperty('--rage',S.mode==='moku'?0:.3+.7*Math.min(S.combo,60)/60)}
+  function wake(){clearTimeout(idle);clearTimeout(endT);ph.classList.remove('cooling')}
+  function hideWeak(){clearTimeout(weakT);S.weak=null;wk.classList.remove('on');if(CO.cur==='weak')hideCoach()}
+  function showWeak(now){var x=W*(.2+Math.random()*.6),y=H*(.34+Math.random()*.38);
+    S.weak={x:x,y:y,r:W*.16,until:now+1700};wk.style.left=x+'px';wk.style.top=y+'px';
+    wk.classList.remove('on');void wk.offsetWidth;wk.classList.add('on');weakT=setTimeout(hideWeak,1700);coach('weak','點中黃圈＝爆擊','tap',true)}
+  function spawn(drop){
+    var rage=S.mode==='rage';S.boss=rage&&S.run%4===3;S.armor=rage&&S.run%4===1;
+    S.max=Math.min(60+30*S.run,300)*(S.boss?2:1);S.hp=S.max;
+    ph.classList.toggle('boss',S.boss);ph.classList.toggle('armor',S.armor);hideWeak();if(CO.cur==='armor')hideCoach();if(drop)setTimeout(clearDk,450);else clearDk();
+    face.src=rage?F[S.cur]:MOKU;face.style.transform='';
+    face.classList.remove('drop');if(drop&&!calm){void face.offsetWidth;face.classList.add('drop')}
+    $('hpl').textContent=S.boss?(S.isNew?'魔王・新角色':'魔王'):S.armor?'鐵頭':'第 '+(S.run+1)+' 個';
+    if(S.armor)coach('armor','頭盔很硬：滑一下或長按','swipe',true);
+    if(drop&&S.boss)floatTxt(W/2,H*.27,'魔王登場！',36,'#FFFFFF');
+    setHp()}
+  function hit(x,y,o){
+    if(S.busy)return;o=o||{};var kind=o.kind||'tap',pw=o.pw||1,dmg=o.dmg||2,now=performance.now();wake();
+    if(!S.taps)S.start=now;S.taps++;S.all++;S.end=now;
+    S.combo=(now-S.last<WP.win)?S.combo+1:1;S.last=now;
+    var rage=S.mode==='rage',crit=false,blocked=false;
+    if(rage){ST.taps++;if(kind==='swipe')ST.swipes++}
+    if(rage&&kind==='tap'&&S.weak&&now<S.weak.until&&Math.hypot(x-S.weak.x,y-S.weak.y)<S.weak.r){crit=true;dmg=10;pw=2;S.combo+=2;ST.crits++;hideWeak()}
+    if(S.combo>S.maxC)S.maxC=S.combo;
+    if(rage&&S.combo>S.best){S.best=S.combo;S.recC=true}
+    ph.classList.add('live');ph.classList.toggle('fever',rage&&S.combo>=60);S.sign=-S.sign;
+    if(!rage){face.style.transform='scale(.9,.84)';setTimeout(function(){if(!S.busy)face.style.transform=''},90);
+      S.merit++;wood();buzz(8);impact(x,y,.5);floatTxt(x,y-24,'功德 +1',20,'#8A5200');
+      $('cn').textContent=S.merit;$('cl').textContent='功德';idle=setTimeout(cooling,1000);return}
+    doneCoach(kind==='tap'?'tap':kind==='swipe'?'swipe':'hold');if(crit)doneCoach('weak');
+    if(S.armor){
+      if(kind==='tap'&&!crit){blocked=true;dmg*=.4}
+      else{S.armor=false;ph.classList.remove('armor');doneCoach('armor');clang();
+        P.push({k:'t',x:W/2,y:H*.36,vx:S.sign*5,vy:-7,g:.5,t:0,life:.9,s:46,txt:'🪖',c:'#1C1014'});floatTxt(W/2,H*.3,'頭盔掉了！',20,'#FFFFFF')}}
+    if(kind==='swipe'){face.style.transform='translateX('+(o.dir*5)+'em) rotate('+(o.dir*38)+'deg) scale(1.1)';whoosh()}
+    else face.style.transform='rotate('+(S.sign*(6+Math.random()*12)*pw)+'deg) scale('+(1.08+.06*pw)+')';
+    setTimeout(function(){if(!S.busy)face.style.transform=''},kind==='swipe'?170:90);
+    if(blocked)clang();else wsound(pw);
+    if(crit)ping();
+    buzz(12*pw);if(blocked)impact(x,y,.5);else wfx(x,y,pw);
+    if(crit)floatTxt(x,y-34,'爆擊！',30,'#FFFFFF');
+    else if(blocked)floatTxt(x,y-28,'鏘',26,'#1C1014');
+    else if(kind==='swipe')floatTxt(x,y-30,'啪！',30,'#FFFFFF');
+    else floatTxt(x+(Math.random()-.5)*60,y-30,EMO[Math.floor(Math.random()*EMO.length)],30);
+    if(S.combo>=50&&Math.floor(S.combo/50)>Math.floor((S.combo-(crit?3:1))/50))floatTxt(W/2,H*.3,(Math.floor(S.combo/50)*50)+' 連擊！',34,'#FFFFFF');
+    var m=S.combo>=60?3:S.combo>=30?2:S.combo>=10?1.5:1;
+    $('cn').textContent=S.combo;$('cl').textContent=level(S.combo)+(m>1?'　傷害 ×'+m:'');heat();
+    S.hp=Math.max(0,S.hp-dmg*m);
+    if(S.hp<=0)ko();else{setHp();if(kind==='tap'&&!crit&&!S.weak&&S.taps>6&&Math.random()<.1)showWeak(now)}
+    checkUnlock();
+    if(!CO.cur){if(S.taps>=8&&!CO.done.swipe)coach('swipe','快速滑過畫面＝巴掌','swipe');
+      else if(CO.done.swipe&&S.combo>=10&&!CO.done.hold)coach('hold','長按蓄力，連擊不會斷','hold')}
+    idle=setTimeout(cooling,1000)}
+  function burst(x,y,n){for(var i=0;i<n;i++)setTimeout(function(){hit(x+(Math.random()-.5)*80,y+(Math.random()-.5)*80,{kind:'charge',dmg:6,pw:1.7})},i*90)}
+  function cooling(){if(S.busy||down)return;ph.classList.add('cooling');scr.style.setProperty('--rage',0);endT=setTimeout(finish,2000)}
+  function ko(){
+    var wasBoss=S.boss;S.run++;S.ko++;ST.kos++;if(S.run>S.bestRun){S.bestRun=S.run;S.recRun=true}
+    if(S.isNew){S.unlocked++;S.got.push(S.cur)}
+    boom();buzz(wasBoss?90:50);wko();for(var i=0;i<(wasBoss?6:3);i++)impact(W*(.2+Math.random()*.6),H*(.34+Math.random()*.3),wasBoss?2.4:1.8);
+    if(!calm){shake=wasBoss?30:20;
+      var gh=face.cloneNode(false);gh.removeAttribute('id');gh.className='face ghost';face.parentNode.appendChild(gh);void gh.offsetWidth;
+      gh.style.transform='translate('+(S.sign*13)+'em,-24em) rotate('+(S.sign*900)+'deg) scale(.2)';gh.style.opacity=0;
+      setTimeout(function(){gh.remove()},900)}
+    $('kot').textContent=wasBoss?'魔王擊退！':'擊退 ×'+S.run;ph.classList.remove('ko');void ph.offsetWidth;ph.classList.add('ko');
+    clearTimeout(koT);koT=setTimeout(function(){ph.classList.remove('ko')},wasBoss?900:650);
+    if(S.run%4===3&&S.unlocked<F.length){S.cur=S.unlocked;S.isNew=true}
+    else{S.isNew=false;if(S.unlocked>1){var c;do{c=Math.floor(Math.random()*S.unlocked)}while(c===S.cur);S.cur=c}}
+    S.last=performance.now()+350;spawn(true)}
+  function finish(){if(S.busy||!S.taps)return;S.busy=true;result()}
+  function result(){
+    var moku=S.mode==='moku';hideWeak();hideCoach();clearDk();
+    $('rH').textContent=moku?'功德圓滿。':S.run?'呼——打完了。':'先這樣也好。';
+    $('rK').textContent=moku?S.merit:S.run;$('rKl').textContent=moku?'功德':'擊退';
+    $('rT').textContent=S.taps;$('rC').textContent=S.maxC;$('rS').textContent=Math.max(1,Math.round((S.end-S.start)/1000));
+    var rec=[];if(S.recC&&S.best>=10)rec.push('最高連擊 '+S.best);if(S.recRun)rec.push('連續擊退 '+S.bestRun);if(S.gotW&&S.gotW.length)rec.push('新武器 '+S.gotW.join('、'));
+    $('rB').hidden=!rec.length;$('rB').textContent='🏅 新紀錄：'+rec.join('、');S.recC=S.recRun=false;
+    if(S.got.length){var im=$('rUi');im.src=F[S.got[S.got.length-1]];$('rUn').textContent='這一輪解鎖 '+S.got.length+' 個';$('rU').hidden=false;
+      im.style.animation='none';void im.offsetWidth;im.style.animation=''}
+    else $('rU').hidden=true;
+    $('again').textContent=moku?'再敲一輪':'再來一輪';
+    $('rq').textContent='現在感覺怎麼樣？';
+    [].forEach.call($('moods').children,function(b){b.setAttribute('aria-pressed','false')});
+    ph.classList.remove('live','ko','cooling','fever');scr.style.setProperty('--rage',0);
+    $('res').classList.add('open');chime()}
+  function fresh(){
+    wake();S.taps=0;S.combo=0;S.maxC=0;S.merit=0;S.run=0;S.got=[];S.gotW=[];S.busy=false;S.cur=S.idx;S.isNew=false;S.last=0;
+    hideCoach();spawn(false);if(S.mode==='rage')coach('tap','點任何地方開打','tap');
+    $('hint').textContent=S.mode==='moku'?'輕輕敲，功德 +1':'點、滑、長按，都算數';
+    $('today').textContent=S.mode==='moku'?'木魚模式':WP.e+' '+WP.n;
+    $('cn').textContent=0;$('cl').textContent='';ph.classList.remove('live','ko','fever','charging');heat()}
+  function setMode(m){if(S.busy||S.mode===m)return;S.mode=m;ph.dataset.mode=m;
+    $('mRage').setAttribute('aria-pressed',m==='rage');$('mMoku').setAttribute('aria-pressed',m==='moku');fresh()}
+
+  /* ---- 輸入：放開時分成 點／滑／蓄力 ---- */
+  function pos(e){var r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]}
+  function release(){
+    if(!down)return;var d=performance.now()-down;down=0;clearTimeout(holdT);
+    var charged=ph.classList.contains('charging');ph.classList.remove('charging');
+    if(S.busy)return;
+    var vx=dx-sx,dist=Math.hypot(vx,dy-sy);
+    if(S.mode==='rage'&&dist>W*.16&&d<450){
+      P.push({k:'l',x:sx,y:sy,x2:dx,y2:dy,vx:0,vy:0,t:0,life:.25,c:'#FFFFFF'});
+      hit(dx,dy,{kind:'swipe',dmg:5,pw:1.5,dir:vx>=0?1:-1});return}
+    if(charged&&S.combo>0)S.last=performance.now();
+    if(!charged||d<1000){hit(sx,sy);return}
+    ST.charges++;burst(sx,sy,d>=3000?5:d>=2000?3:2)}
+  scr.addEventListener('pointerdown',function(e){
+    if(S.busy||e.target.closest('button'))return;
+    var p=pos(e);sx=dx=p[0];sy=dy=p[1];moved=false;down=performance.now();wake();ac();
+    if(S.combo>0&&down-S.last<WP.win)S.hold=true;else S.hold=false;
+    try{scr.setPointerCapture(e.pointerId)}catch(_){}
+    clearTimeout(holdT);
+    if(S.mode==='rage')holdT=setTimeout(function(){if(down&&!moved){ph.classList.add('charging');if(!S.hold)S.combo=0}},220)});
+  scr.addEventListener('pointermove',function(e){
+    if(!down)return;var p=pos(e);dx=p[0];dy=p[1];
+    if(!moved&&Math.hypot(dx-sx,dy-sy)>W*.06){moved=true;clearTimeout(holdT);ph.classList.remove('charging')}});
+  scr.addEventListener('pointerup',release);scr.addEventListener('pointercancel',release);
+  scr.addEventListener('contextmenu',function(e){e.preventDefault()});
+  scr.addEventListener('keydown',function(e){
+    if((e.key===' '||e.key==='Enter')&&e.target===scr){e.preventDefault();if(!e.repeat)hit(W/2,H*.5)}});
+
+  $('mRage').addEventListener('click',function(){setMode('rage')});
+  $('mMoku').addEventListener('click',function(){setMode('moku')});
+  $('bSnd').addEventListener('click',function(){S.sound=!S.sound;this.textContent=S.sound?'🔊 聲音開':'🔇 靜音';this.setAttribute('aria-pressed',S.sound)});
+  $('moods').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;
+    var was=[].findIndex.call(this.children,function(x){return x.getAttribute('aria-pressed')==='true'});
+    var now=[].indexOf.call(this.children,b);if(was>=0)S.moods[was]--;S.moods[now]++;
+    [].forEach.call(this.children,function(x){x.setAttribute('aria-pressed',x===b)});$('rq').textContent='記下來了'});
+  $('again').addEventListener('click',function(){$('res').classList.remove('open');fresh()});
+  $('bDex').addEventListener('click',function(){
+    $('dexN').textContent='已解鎖 '+S.unlocked+' / '+F.length;var G=$('dexG');G.textContent='';
+    F.forEach(function(src,i){var b=document.createElement('button');b.type='button';
+      b.className='cell'+(i>=S.unlocked?' lock':'')+(i===S.idx&&S.mode==='rage'?' on':'');
+      b.setAttribute('aria-label',i<S.unlocked?'角色 '+(i+1):'未解鎖');if(i>=S.unlocked)b.disabled=true;
+      var im=document.createElement('img');im.src=src;im.alt='';b.appendChild(im);
+      b.addEventListener('click',function(){S.idx=i;if(S.mode!=='rage'){S.mode='rage';ph.dataset.mode='rage';$('mRage').setAttribute('aria-pressed',true);$('mMoku').setAttribute('aria-pressed',false)}
+        fresh();$('dex').classList.remove('open')});
+      G.appendChild(b)});
+    $('dex').classList.add('open')});
+  $('bLog').addEventListener('click',function(){
+    $('lK').textContent=S.ko;$('lR').textContent=S.bestRun;$('lT').textContent=S.all;$('lC').textContent=S.best;
+    $('l0').textContent=S.moods[0];$('l1').textContent=S.moods[1];$('l2').textContent=S.moods[2];$('log').classList.add('open')});
+  $('today').addEventListener('click',function(){
+    if(S.mode!=='rage')return;var L=$('wpL');L.textContent='';
+    WL.forEach(function(w){var b=document.createElement('button');b.type='button';
+      b.className='wrow'+(w===WP?' on':'')+(w.own?'':' lock');b.disabled=!w.own;
+      var i=document.createElement('i');i.textContent=w.e;var sp=document.createElement('span');
+      var n=document.createElement('b');n.textContent=w.n;var d=document.createElement('small');d.textContent=w.d;sp.appendChild(n);sp.appendChild(d);
+      if(!w.own){var c=document.createElement('small');c.textContent='解鎖：'+w.lab+' '+Math.min(ST[w.need[0]],w.need[1])+' / '+w.need[1];sp.appendChild(c)}
+      b.appendChild(i);b.appendChild(sp);
+      b.addEventListener('click',function(){WP=w;$('today').textContent=w.e+' '+w.n;$('wp').classList.remove('open')});
+      L.appendChild(b)});
+    $('wp').classList.add('open')});
+  $('bHelp').addEventListener('click',function(){$('help').classList.add('open')});
+  [].forEach.call(document.querySelectorAll('[data-close]'),function(b){b.addEventListener('click',function(){b.closest('.sheet').classList.remove('open')})});
+  heat();setHp();coach('tap','點任何地方開打','tap');
+})();
+</script>
